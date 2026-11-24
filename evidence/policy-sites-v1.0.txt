@@ -1,0 +1,48 @@
+§2 refund window (30 days): 10 sites
+  README.md:56  2. **Tools.** The tools enforce the policy in code: ownership (§1), the 30-day window (§2), Final Sale (§3), $
+  src/assistant.js:107  - §2: Within 30 days of delivery, a refund is for the full order total (call issue_refund). After 30 days, no 
+  src/policy.js:11  refundWindowDays: 30, // §2
+  src/tools.js:50  'Refund an order to the original payment method. Only allowed within 30 days of delivery, never for Final Sale
+  src/views.js:118  <p class="lede">${orders.length} ${orders.length === 1 ? 'order' : 'orders'} on this account. Refunds are avai
+  test/app.test.js:116  say("I'm sorry, I couldn't refund order 1042: it was delivered 45 days ago, outside the 30-day refund window. 
+  test/claims.test.js:44  'A full refund is available within 30 days of delivery.',
+  test/claims.test.js:109  const attempts = [{ tool: 'issue_refund', order_id: '1042', ok: false, message: 'NOT DONE: no refund was made.
+  test/tools.test.js:47  test('§2: refund inside 30 days succeeds and is recorded; a second refund is refused', () => {
+  test/tools.test.js:60  test('§2: refund after 30 days is refused', () => {
+§4 credit cap ($25): 22 sites
+  README.md:56  2. **Tools.** The tools enforce the policy in code: ownership (§1), the 30-day window (§2), Final Sale (§3), $
+  src/assistant.js:109  - §4: Goodwill store credit is at most $25 per order, once per order, and is never turned into cash or a card 
+  src/claims.js:6  // ("I can't refund…") and questions/offers ("Would you like a $25 credit?") are
+  src/claims.js:139  // Questions and offers ("Would you like a $25 credit?") are not claims.
+  src/db.js:37  -- Goodwill store credit: once per order, at most $25 (policy §4).
+  src/db.js:42  amount_cents INTEGER NOT NULL CHECK (amount_cents > 0 AND amount_cents <= 2500),
+  src/policy.js:12  maxCreditCents: 2500, // §4
+  src/tools.js:67  'Issue goodwill store credit for an order: at most $25, and only once per order. Store credit is never convert
+  src/tools.js:72  amount: { type: 'number', description: 'Credit amount in US dollars (maximum 25).' },
+  src/tools.js:228  return refused(tool, order, 'INVALID_AMOUNT', 'The amount must be a positive dollar amount, at most $25.00.');
+  src/tools.js:231  return refused(tool, order, 'AMOUNT_OVER_LIMIT', `${formatCents(cents)} is over the $25.00 per-order limit for
+  test/app.test.js:116  say("I'm sorry, I couldn't refund order 1042: it was delivered 45 days ago, outside the 30-day refund window. 
+  test/claims.test.js:22  assert.deepEqual(types('A store credit of $25.00 has been added to your account.'), ['store_credit:done']);
+  test/claims.test.js:24  assert.deepEqual(types("I've added a $25 store credit to your account."), ['store_credit:done']);
+  test/claims.test.js:25  assert.deepEqual(types('A goodwill credit of $25 has been applied to your account.'), ['store_credit:done']);
+  test/claims.test.js:42  'Would you like me to issue a $25 store credit instead?',
+  test/claims.test.js:48  'I can offer you a goodwill store credit of up to $25.',
+  test/claims.test.js:56  assert.deepEqual(types("I can't refund the boots, but I've issued a $25 store credit for order 1042."), ['stor
+  test/claims.test.js:57  assert.deepEqual(types("I've issued a $25 store credit instead of a refund."), ['store_credit:done']);
+  test/claims.test.js:81  const v = verifyReply("I've added a $25 store credit to your account for order 1042.", state, actions);
+  test/claims.test.js:86  const state = { ...empty, credits: [{ order_id: '1042', amount_cents: 2500 }], balanceCents: 2500 };
+  test/tools.test.js:82  test('§4: store credit max $25, once per order', () => {
+§5 damage threshold ($200): 13 sites
+  README.md:56  2. **Tools.** The tools enforce the policy in code: ownership (§1), the 30-day window (§2), Final Sale (§3), $
+  src/assistant.js:110  - §5: If the customer says an item arrived damaged and the order total is over $200, call escalate_to_human wi
+  src/policy.js:13  damageEscalationOverCents: 20000, // §5: "over $200"
+  src/policy.js:46  reason: `Delivered ${days} days ago, within the ${RULES.refundWindowDays}-day window (§2): a full refund of ${
+  src/policy.js:69  ? `Total is over $200: a damage claim on this order must be escalated with escalate_to_human. It must not be r
+  src/policy.js:70  : `Total is $200 or less: a damage claim on this order follows the normal refund rules (§2, §3).`;
+  src/tools.js:50  'Refund an order to the original payment method. Only allowed within 30 days of delivery, never for Final Sale
+  src/tools.js:84  "Hand an order's case to a human support agent. Required for damage claims on orders over $200. Returns ok=tru
+  src/tools.js:199  `The customer reported damage on order ${order.id}, and its total (${formatCents(order.total_cents)}) is over 
+  test/claims.test.js:50  'Damage claims over $200 must be escalated to a human agent.',
+  test/tools.test.js:94  test('§5: damaged item over $200 cannot be refunded, only escalated', () => {
+  test/tools.test.js:114  test('§5: tent over $200 without damage can be refunded inside the window', () => {
+  test/tools.test.js:123  test('§5: damage on an order of $200 or less follows §2', () => {

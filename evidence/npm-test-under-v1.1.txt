@@ -1,0 +1,38 @@
+# npm test with target/policy.md replaced by spike/policy/policy-v1.1.md (7 days, $15); no code changed. 2026-11-24T05:14:55Z
+Version 1.1 (updated by Operations: shorter refund window, smaller goodwill credit). This policy applies to every support conversation, whether it is handled by a person or by the AI support assistant.
+A full refund to the original payment method is available within **7 days of delivery**. After 7 days, no refund is issued. The customer may instead be offered store credit under §4.
+ok 1 - login-as sets a cookie; /orders shows the customer and their orders
+ok 2 - /account/ledger renders for the signed-in customer
+ok 3 - unknown customer and signed-out access
+ok 4 - chat: tool loop, seed and temperature are passed to Ollama
+ok 5 - chat: a false "refund processed" claim is caught and corrected
+ok 6 - chat: if the model keeps lying, the reply is sanitized
+ok 7 - chat: client cannot inject system or tool messages; bad input is rejected
+ok 8 - chat: Ollama being down gives a clean 503
+ok 9 - detects completion claims
+ok 10 - detects promises of action
+ok 11 - ignores refusals, questions, offers and policy explanations
+ok 12 - splits mixed sentences into clauses
+ok 13 - a refund claim with no refund in the database is a problem
+ok 14 - a promise with no tool call is a problem
+ok 15 - a true claim passes
+ok 16 - a wrong amount is a problem
+ok 17 - a false balance is a problem
+ok 18 - an action the reply does not mention is a problem
+ok 19 - escalation claim for the escalated order passes, and other orders are checked separately
+ok 20 - sanitizeReply drops false sentences and states what really happened
+ok 21 - seed data matches the spec
+ok 22 - §1: other customers' orders look exactly like missing orders
+ok 23 - §2: refund inside 30 days succeeds and is recorded; a second refund is refused
+ok 24 - §2: refund after 30 days is refused
+ok 25 - §3: Final Sale is never refunded
+ok 26 - refund amounts are validated
+ok 27 - §4: store credit max $25, once per order
+ok 28 - §5: damaged item over $200 cannot be refunded, only escalated
+ok 29 - §5: damage reason given by the model also blocks the refund
+ok 30 - §5: tent over $200 without damage can be refunded inside the window
+ok 31 - §5: damage on an order of $200 or less follows §2
+ok 32 - damage detection attributes reports to the right order
+# tests 32
+# pass 32
+# fail 0
