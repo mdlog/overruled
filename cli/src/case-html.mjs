@@ -127,11 +127,16 @@ export function renderCase({ caseDir, root, pack, frameStep, callouts, heldout, 
       <tfoot><tr><th>All customers</th>${heldout.models.map((m) => ratio(heldout.totals.pre[m]) + ratio(heldout.totals.post[m])).join('')}</tr></tfoot>
     </table>
     <p class="fine">Cells count conversations that broke the edited policy (a forbidden refund, credit or escalation, or a required one that never happened), out of ${esc(heldout.seeds)} seeds at temperature ${esc(heldout.temperature)}. Code changed between the fix and this run: <b>${esc(heldout.code_diff_lines)} lines</b>.</p>
+    ${heldout.stale_totals ? `<p class="fine">The bot also <i>said</i> a number the edit had replaced (21 days, $40 and $120 replaced 30 days, $25 and $200 before the fix, and 60 days, $25 and $200 after it): ${heldout.models.map((m) => `${esc(m)} ${esc(heldout.stale_totals.pre[m])} before the fix, ${esc((heldout.stale_post_rescored?.totals || heldout.stale_totals.post)[m])} after`).join('; ')}.${heldout.stale_post_rescored ? ` The after-fix count uses a 60-day pattern for §2, added after the run (labelled).` : ''}</p>` : ''}
     ${heldout.half ? `<div class="aside"><p class="label">Half-applied</p><p>${esc(heldout.half)}</p></div>` : ''}
     ${heldout.deviation ? `<p class="fine dev"><b>Labelled deviation.</b> ${esc(heldout.deviation)}</p>` : ''}
   </section>` : '';
 
-  const greenHtml = green.status === 'passed'
+  const greenHtml = green.status === 'passed' && green.kind === 'analyzer-only'
+    ? `<p><b>Kane, again as the customer:</b> ${esc(green.status)} — “${esc(green.one_liner)}”</p>
+    <table class="values"><tbody>${(green.conditions || []).map((k) => `<tr><th>${esc(k.text)}<small>expected ${k.expected ? 'true' : 'false'}</small></th><td>${k.result === k.expected ? '✓' : '✗'} judged <b>${k.result ? 'true' : 'false'}</b> · read “${esc(k.extracted)}”</td></tr>`).join('')}</tbody></table>
+    <p class="fine">Labelled. The conversation ran in the probe, ${esc(green.conversation)}. Kane then signed in as Ana and read <code>/orders</code> in <code>--analyzer-only</code> mode: no agent steps and no evidence pack, ${esc(green.duration_s)} s, ${esc(green.credits)} credits. The third condition is a negative control. Record: <code>${esc(green.recorded)}</code>.</p>`
+    : green.status === 'passed'
     ? `<p><b>Kane, again as the customer:</b> ${esc(green.status)} — “${esc(green.one_liner)}”</p>`
     : green.status === 'not-run'
       ? '<p class="fine"><b>Kane green run: not run yet.</b> Out of Kane credits, so the customer replay above is the labelled stand-in.</p>'

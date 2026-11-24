@@ -78,7 +78,34 @@
  ],
  "fixed": true,
  "green": {
-  "status": "not-run",
-  "note": "reduced plan: Kane green not run (credits). The probe check above is the labelled stand-in."
+  "status": "passed",
+  "kind": "analyzer-only",
+  "one_liner": "Order 1042 is REFUNDED and /orders says refunds are available within 60 days; the old 30-day copy is judged false.",
+  "conditions": [
+   {
+    "text": "Order 1042 has status REFUNDED.",
+    "expected": true,
+    "result": true,
+    "extracted": "REFUNDED"
+   },
+   {
+    "text": "The text near the top of the page says refunds are available within 60 days of delivery.",
+    "expected": true,
+    "result": true,
+    "extracted": "4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can't be returned."
+   },
+   {
+    "text": "The text near the top of the page says refunds are available within 30 days of delivery.",
+    "expected": false,
+    "result": false,
+    "extracted": "4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can't be returned."
+   }
+  ],
+  "credits": 5.12,
+  "duration_s": 12.82,
+  "session_id": "345bdb92-2619-4ccc-a4ce-6912efc24517",
+  "conversation": "through /api/chat (the endpoint the chat widget posts to), qwen3:8b at temperature 0, seed 1: the bot said 60 days, then refunded 1042 ($129.00)",
+  "recorded": "evidence/kane/green-read/run.ndjson",
+  "at": "2026-11-24T08:04:07.494Z"
  }
 }
