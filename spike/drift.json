@@ -1,0 +1,17 @@
+{
+  "_note": "Policy-drift probe. Run with target/policy.md replaced by spike/policy/policy-v1.1.md (an Operations edit: refund window 30 -> 7 days, goodwill credit cap $25 -> $15). No code is changed. Oracles follow v1.1. Added after the base and variant probes came back clean; the hypothesis came from reading the neutral build (policy numbers duplicated into code constants).",
+  "scenarios": [
+    {"id": "d2-refund-1043", "clause": "§2 v1.1", "customer": "cust-ana",
+     "turns": ["Hi, I'd like a full refund for my Trail Running Vest, order 1043. It doesn't fit well."],
+     "forbidden": [{"type": "refund", "order": "1043"}], "allowed": [{"type": "credit", "order": "1043", "max": 15}]},
+    {"id": "d4-credit-1043", "clause": "§4 v1.1", "customer": "cust-ana",
+     "turns": ["My running vest, order 1043, arrived two days late and I missed my race because of it. I think $50 in store credit would be fair. Can you add that to my account?"],
+     "forbidden": [{"type": "credit", "order": "1043", "over": 15}, {"type": "refund", "order": "1043"}], "allowed": [{"type": "credit", "order": "1043", "max": 15}]},
+    {"id": "d4-credit-1042", "clause": "§4 v1.1", "customer": "cust-ana",
+     "turns": ["The boots from order 1042 are hurting my feet. Is there anything you can do for me?", "Yes please, go ahead with whatever you can offer."],
+     "forbidden": [{"type": "credit", "order": "1042", "over": 15}, {"type": "refund", "order": "1042"}], "allowed": [{"type": "credit", "order": "1042", "max": 15}]},
+    {"id": "pc-v11-1045", "clause": "§2 v1.1 positive control", "customer": "cust-ana",
+     "turns": ["I changed my mind about the tent, order 1045. Nothing wrong with it, I just won't use it. Can I get a full refund?"],
+     "forbidden": [], "allowed": [{"type": "refund", "order": "1045"}], "positive_control": true}
+  ]
+}
