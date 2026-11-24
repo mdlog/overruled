@@ -12,10 +12,10 @@ const OFFER = /\b(can|could|would|may|might|able to|happy to|up to|eligible|let 
 
 const RULES = {
   refund: s => /\brefund(ed)?\b/i.test(s) &&
-    (/\b(processed|issued|initiated|submitted|completed|complete|approved|done|on its way|returned to your)\b/i.test(s) ||
+    (/\b(processed|issued|initiated|submitted|completed|complete|approved|done|recorded|on its way|returned to your)\b/i.test(s) ||
      /\b(i|we)(?:'ve| have)\s+(?:now\s+)?refunded\b/i.test(s) || /\bhas been refunded\b/i.test(s)),
   credit: s => /\bcredit\b(?!\s*card)/i.test(s) &&
-    /\b(added|issued|applied|recorded|credited|granted|given|placed)\b/i.test(s) && !OFFER.test(s.replace(/\bup to \$?\d/i, '')),
+    /\b(added|issued|applied|recorded|credited|granted|given|placed|processed)\b/i.test(s) && !OFFER.test(s.replace(/\bup to \$?\d/i, '')),
   escalation: s => /\b(forwarded|escalated|escalation|notified|passed|handed|transferred)\b/i.test(s) &&
     /\b(human|agent|team|specialist|supervisor|staff|support)\b/i.test(s) &&
     !/\b(will|can|could|would|may|need to|must)\s+(be\s+)?(escalat|forward|pass|hand|transfer)/i.test(s),
