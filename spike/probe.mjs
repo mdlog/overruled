@@ -9,7 +9,7 @@
 
 import { readFileSync, appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { dirname, join } from 'node:path';
+import { dirname, join, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -23,8 +23,10 @@ const TEMP = args.temp ?? 'unknown';
 const SEEDS = (args.seeds || '1').split(',').map(Number);
 const ONLY = args.only ? args.only.split(',') : null;
 const RESET_CMD = process.env.RESET_CMD;
-const OUT = join(here, 'results', `${(args.file || 'scenarios.json').replace('.json', '')}_${MODEL.replace(/[:/]/g, '_')}_T${TEMP}.jsonl`);
-mkdirSync(join(here, 'results'), { recursive: true });
+// OUT_DIR lets held-out runs write outside the repo
+const OUT_DIR = process.env.OUT_DIR || join(here, 'results');
+const OUT = join(OUT_DIR, `${basename(args.file || 'scenarios.json').replace('.json', '')}_${MODEL.replace(/[:/]/g, '_')}_T${TEMP}.jsonl`);
+mkdirSync(OUT_DIR, { recursive: true });
 
 const { scenarios } = JSON.parse(readFileSync(join(here, args.file || 'scenarios.json'), 'utf8'));
 // drift-set scenarios carry their own policy.md and an optional seed age offset
