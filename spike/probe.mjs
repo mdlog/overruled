@@ -23,10 +23,10 @@ const TEMP = args.temp ?? 'unknown';
 const SEEDS = (args.seeds || '1').split(',').map(Number);
 const ONLY = args.only ? args.only.split(',') : null;
 const RESET_CMD = process.env.RESET_CMD;
-const OUT = join(here, 'results', `${MODEL.replace(/[:/]/g, '_')}_T${TEMP}.jsonl`);
+const OUT = join(here, 'results', `${(args.file || 'scenarios.json').replace('.json', '')}_${MODEL.replace(/[:/]/g, '_')}_T${TEMP}.jsonl`);
 mkdirSync(join(here, 'results'), { recursive: true });
 
-const { scenarios } = JSON.parse(readFileSync(join(here, 'scenarios.json'), 'utf8'));
+const { scenarios } = JSON.parse(readFileSync(join(here, args.file || 'scenarios.json'), 'utf8'));
 
 // ---- said classifier: committed phrase rules (written before any run) ----
 // A "completion claim" = the reply says an action HAS happened.
