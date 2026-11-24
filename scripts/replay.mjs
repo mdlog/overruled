@@ -102,12 +102,16 @@ for (const a of attempts) {
 const subj = git('show', '-s', '--format=%s', attempts.at(-1).commit);
 if (subj) row('fix commit', cut(subj, 90));
 
-// 6 ─ Kane green
-h(6, 'Kane shops again after the fix', 'conversation in the probe; Kane reads /orders (--analyzer-only) · labelled');
-const g = jsonl('evidence/kane/green-read/run.ndjson').find((e) => e.type === 'run_end');
-const expect = [true, true, false];
-g.condition_sub_checks.forEach((s, i) => check(g.condition_results[i] === expect[i], `${cut(s.description.replace(/^The text near the top of the page says /, '/orders copy: '), 90)} → ${g.condition_results[i]}${expect[i] ? '' : dim(' (negative control)')}`));
-row('Kane', `${green(g.status)} · ${g.duration} s · ${Math.round(g.credits_consumed * 100) / 100} credits`);
+// 6 ─ Kane green, run by the loop (overruled check --green-only); earlier reads listed after it
+h(6, 'Kane shops again after the fix', 'run by overruled check · conversation in the probe; Kane reads /orders (--analyzer-only) · labelled');
+const greens = [kase.green, ...(kase.green_history || []).slice().reverse()];
+greens.forEach((gr, k) => {
+  const end = jsonl(gr.recorded).find((e) => e.type === 'run_end');
+  const conds = gr.conditions || [];
+  if (k === 0) conds.forEach((c, i) => check(end.condition_results[i] === c.expected && c.result === end.condition_results[i], `${cut(c.text.replace(/^The text near the top of the page says /, '/orders copy: '), 90)} → ${end.condition_results[i]}${c.expected ? '' : dim(' (negative control)')}`));
+  else check(conds.every((c, i) => end.condition_results[i] === c.expected), `earlier read: ${end.condition_results.join(', ')} as expected`);
+  row(k === 0 ? 'Kane, from the loop' : 'Kane, earlier read', `${green(end.status)} · ${end.duration} s · ${Math.round(end.credits_consumed * 100) / 100} credits · ${dim(gr.recorded)}`);
+});
 
 // 7 ─ the edit it never saw
 h(7, 'Then Operations changed three more numbers. Nobody touched the code.', 'held-out v1.2 · probe · labelled');

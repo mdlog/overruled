@@ -80,7 +80,8 @@
  "green": {
   "status": "passed",
   "kind": "analyzer-only",
-  "one_liner": "Order 1042 is REFUNDED and /orders says refunds are available within 60 days; the old 30-day copy is judged false.",
+  "kane_status": "passed",
+  "one_liner": "Every condition judged as expected (3, including 1 negative control).",
   "conditions": [
    {
     "text": "Order 1042 has status REFUNDED.",
@@ -101,11 +102,49 @@
     "extracted": "4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can't be returned."
    }
   ],
-  "credits": 5.12,
-  "duration_s": 12.82,
-  "session_id": "345bdb92-2619-4ccc-a4ce-6912efc24517",
-  "conversation": "through /api/chat (the endpoint the chat widget posts to), qwen3:8b at temperature 0, seed 1: the bot said 60 days, then refunded 1042 ($129.00)",
-  "recorded": "evidence/kane/green-read/run.ndjson",
-  "at": "2026-11-24T08:04:07.494Z"
- }
+  "credits": 4.86,
+  "duration_s": 10.69,
+  "session_id": "6f61e09f-7e28-482d-bb1f-c912301280fa",
+  "conversation": "through /api/chat (the endpoint the chat widget posts to), qwen3:8b at temperature 0, seed 1",
+  "recorded": "evidence/loop/2026-11-24T0720Z-fcbbf44/kane-green-2026-11-24T0951Z/run.ndjson",
+  "replayed_record": false,
+  "balance": {
+   "before": "Available credits: 9.9051",
+   "after": "Available credits: 5.0467"
+  },
+  "at": "2026-11-24T09:51:43.345Z"
+ },
+ "green_history": [
+  {
+   "status": "passed",
+   "kind": "analyzer-only",
+   "one_liner": "Order 1042 is REFUNDED and /orders says refunds are available within 60 days; the old 30-day copy is judged false.",
+   "conditions": [
+    {
+     "text": "Order 1042 has status REFUNDED.",
+     "expected": true,
+     "result": true,
+     "extracted": "REFUNDED"
+    },
+    {
+     "text": "The text near the top of the page says refunds are available within 60 days of delivery.",
+     "expected": true,
+     "result": true,
+     "extracted": "4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can't be returned."
+    },
+    {
+     "text": "The text near the top of the page says refunds are available within 30 days of delivery.",
+     "expected": false,
+     "result": false,
+     "extracted": "4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can't be returned."
+    }
+   ],
+   "credits": 5.12,
+   "duration_s": 12.82,
+   "session_id": "345bdb92-2619-4ccc-a4ce-6912efc24517",
+   "conversation": "through /api/chat (the endpoint the chat widget posts to), qwen3:8b at temperature 0, seed 1: the bot said 60 days, then refunded 1042 ($129.00)",
+   "recorded": "evidence/kane/green-read/run.ndjson",
+   "at": "2026-11-24T08:04:07.494Z"
+  }
+ ]
 }

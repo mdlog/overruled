@@ -29,7 +29,7 @@ npm run replay        # no install, no GPU, no model, no Kane credits, no networ
    - every `file:line` that restates the old number, from `overruled sites`
 
    It makes one machine-readable block in `policy.md` feed every one of those places, and makes the money tools fail closed. One attempt; `npm test` 62/62; 0 lines left restating a number.
-6. **Kane shops again.** Order 1042 is REFUNDED, and `/orders` says 60 days.
+6. **The loop sends Kane shopping again** (`overruled check --green-only`). The customer's conversation runs first (labelled probe), then Kane reads `/orders`: 1042 is REFUNDED, the page says 60 days, and the old 30-day copy is judged false.
 7. **Then Operations changes three more numbers, and nobody touches the code.** This is the held-out edit, written and hashed before the fix. The fixed store follows it: **0/35 breaches on both models**, where the unfixed store broke it 15/35 and 8/35 times.
 
 ## The loop
@@ -57,7 +57,7 @@ Config: `overruled.config.json` (Kane objective, the keys Kane stores, the fix c
 | The agent's tests assert the bug | `evidence/npm-test-under-e2.txt` | `npm test` under the edited policy: 32/32 pass |
 | The 4 lines that restated 30 days | `evidence/loop/…/packet.json` | `overruled sites --from` (no Kane, no model) |
 | Claude Code fixes it in 1 attempt | `evidence/loop/2026-11-24T0720Z-fcbbf44/`, commit `5652674` | `claude -p` from the packet: 17 paths, `npm test` 62/62, residual 0, probe 4/4 |
-| Kane: after the fix, 1042 is REFUNDED and `/orders` says 60 days | `evidence/kane/green-read/` | **Kane** `run --analyzer-only`, 3 conditions including a negative control, 5.12 credits. The conversation ran in the probe (labelled) |
+| Kane: after the fix, 1042 is REFUNDED and `/orders` says 60 days | `evidence/loop/…/kane-green-2026-11-24T0951Z/` (run by the loop), and the earlier read `evidence/kane/green-read/` | **Kane** `run --analyzer-only`, 3 conditions including a negative control: 4.86 credits from the loop, 5.12 for the earlier read by script. Both runs judged as expected. The conversation ran in the probe (labelled) |
 | Which copy each model obeys: qwen3:8b moves money wrongly 14/15, gpt-oss:20b 2/15; both refuse e2/e6 10/10; control green | `spike/drift-set.json` (hash `d3d04bf6…`, committed before any result), `spike/results/drift-set_*` | **probe**, pre-registered, 5 seeds at T0.7 |
 | The held-out edit holds with 0 lines of code changed | `evidence/heldout/` (hash `da884f9a…` committed in `7b4409b`, before the fix) | **probe**, 7 customers incl. 2 written in Indonesian, 2 positive controls |
 | Half-applied policy fails closed | `evidence/heldout/v1.2-halfapplied*` | **probe**: 0 refunds, credits or escalations in 7/7 |
