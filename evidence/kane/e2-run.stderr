@@ -1,0 +1,6 @@
+Skill update available: not installed → 0.1.4 — run `kane-cli install skill`
+
+Running on: Desktop · Chrome
+coverage: 0% from this run, which ran no designed test
+  for coverage so far, run: kane-cli cover
+evidence: view locally with `kane-cli evidence serve /home/mdlog/.testmuai/kaneai/sessions/4e2f78cf-7650-4a64-aa62-223ffda3b25f/evidence/b089bcc1-8547-49a5-a4d5-11d73186c7fd.evidence`
