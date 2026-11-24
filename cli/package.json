@@ -1,0 +1,11 @@
+{
+  "name": "overruled",
+  "version": "0.1.0",
+  "description": "Find every line of code that restates a number from your policy page, so a policy edit can't be quietly overruled.",
+  "type": "module",
+  "bin": { "overruled": "bin/overruled.mjs" },
+  "files": ["bin", "src", "README.md"],
+  "engines": { "node": ">=20" },
+  "license": "MIT",
+  "keywords": ["policy", "support-bot", "kane-cli", "claude-code", "testing"]
+}
