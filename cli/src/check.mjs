@@ -97,6 +97,7 @@ function packetMarkdown(p, cfg) {
   const vals = Object.entries(p.kane.values).map(([k, v]) => `- \`${k}\`: ${JSON.stringify(v)}`).join('\n');
   const src = p.sites.filter((s) => s.in_source).map((s) => `- \`${s.file}:${s.line}\` [${s.kind}] ${s.text}`).join('\n');
   const tests = p.sites.filter((s) => s.kind === 'test').map((s) => `- \`${s.file}:${s.line}\` ${s.text}`).join('\n');
+  const others = (p.other_sites || []).map((s) => `- \`${s.file}:${s.line}\` [${s.kind}] ${s.clause_id} ${fmt(s.value, s.unit)}: ${s.text}`).join('\n');
   return `# Overruled: the store acts on a rule its policy page no longer says
 
 Operations edited \`policy.md\` (commit ${p.policy_commit}). No code changed. Kane then shopped as a customer through the real chat widget.
@@ -113,6 +114,9 @@ Evidence pack: \`${p.kane.pack || 'n/a'}\`. Gate verdict: ${p.verdict ? `${p.ver
 
 ## Every source line that still restates the old number (${p.sites.filter((s) => s.in_source).length})
 ${src || '- none found'}
+
+## Source lines that restate the other policy numbers (contract item 2 covers these too)
+${others || '- none found'}
 
 ## Tests that assert the old rule (your suite is ${p.npm_test.fail ? 'failing' : `green: ${p.npm_test.pass} pass`})
 ${tests || '- none found'}
@@ -194,7 +198,9 @@ export async function check(opts) {
   const npm_test = npmTest(cfg, root);
   log(`${sites.filter((s) => s.in_source).length} source lines restate the old number; npm test ${npm_test.pass} pass / ${npm_test.fail} fail`);
 
-  const packet = { id: caseId, policy_commit, clause_diffs, kane, verdict: v, sites, npm_test: { pass: npm_test.pass, fail: npm_test.fail } };
+  const changed = new Set(oldNums.map((n) => `${n.clause_id}|${n.unit}`));
+  const other_sites = residual(cfg, root, oldPolicy, newPolicy).sites.filter((s) => !changed.has(`${s.clause_id}|${s.unit}`));
+  const packet = { id: caseId, policy_commit, clause_diffs, kane, verdict: v, sites, other_sites, npm_test: { pass: npm_test.pass, fail: npm_test.fail } };
   const md = packetMarkdown(packet, cfg);
   assertNoHeldout(md + JSON.stringify(packet), cfg, root);
   packet.sha256 = sha(md);
