@@ -1,0 +1,3 @@
+sha256(drift-set.json + spike/policy/{e1..e7,c0}*.md, concatenated in that order) = d3d04bf606886644b7e8280ba956067929822a802eec08be89dd4917927844af
+Committed before any drift-set run. Recompute:
+  cat spike/drift-set.json spike/policy/e1-window14.md spike/policy/e2-window60.md spike/policy/e3-credit10.md spike/policy/e4-credit50.md spike/policy/e5-damage100.md spike/policy/e6-damage500.md spike/policy/e7-highvalue.md spike/policy/c0-reworded.md | sha256sum

@@ -7,7 +7,7 @@
 // with OLLAMA_MODEL / OLLAMA_TEMPERATURE set to the same values, and that RESET_CMD
 // restores the seed database (default: the target's seed script).
 
-import { readFileSync, appendFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -27,6 +27,17 @@ const OUT = join(here, 'results', `${(args.file || 'scenarios.json').replace('.j
 mkdirSync(join(here, 'results'), { recursive: true });
 
 const { scenarios } = JSON.parse(readFileSync(join(here, args.file || 'scenarios.json'), 'utf8'));
+// drift-set scenarios carry their own policy.md and an optional seed age offset
+const TARGET_POLICY = join(here, '..', 'target', 'policy.md');
+const ORIGINAL_POLICY = readFileSync(TARGET_POLICY, 'utf8');
+const restorePolicy = () => writeFileSync(TARGET_POLICY, ORIGINAL_POLICY);
+process.on('exit', restorePolicy);
+for (const s of ['SIGINT', 'SIGTERM']) process.on(s, () => process.exit(130));
+function prepare(sc) {
+  writeFileSync(TARGET_POLICY, sc.policy ? readFileSync(join(here, 'policy', sc.policy), 'utf8') : ORIGINAL_POLICY);
+  if (sc.seed_offset_days) execSync(`node --experimental-sqlite --disable-warning=ExperimentalWarning ../spike/seed-at.mjs ${Number(sc.seed_offset_days)}`, { cwd: join(here, '..', 'target'), stdio: 'ignore' });
+  else if (RESET_CMD) execSync(RESET_CMD, { stdio: 'ignore' });
+}
 
 import { saidClaims, judge } from './judge.mjs';
 
@@ -79,13 +90,13 @@ function diff(before, after) {
 for (const sc of scenarios) {
   if (ONLY && !ONLY.includes(sc.id)) continue;
   for (const seed of SEEDS) {
-    if (RESET_CMD) execSync(RESET_CMD, { stdio: 'ignore' });
+    prepare(sc);
     const cookie = await login(sc.customer);
     const before = parseState((await page("/orders", cookie)).html, (await page("/account/ledger", cookie)).html);
     const messages = []; const replies = []; let err = null; let ms = 0;
     for (const turn of sc.turns) {
       messages.push({ role: 'user', content: turn });
-      const r = await chat(cookie, messages, seed);
+      let r; try { r = await chat(cookie, messages, seed); } catch (e) { r = { status: 0, json: { raw: String(e.cause?.code || e.message) }, ms: 0 }; }
       ms += r.ms;
       if (r.status !== 200) { err = `HTTP ${r.status}: ${replyText(r.json).slice(0, 200)}`; break; }
       const t = replyText(r.json);
@@ -96,9 +107,9 @@ for (const sc of scenarios) {
     const said = saidClaims(allReplies);
     const effects = diff(before, after);
     const verdict = err ? { error: err } : judge(sc, effects, said, allReplies);
-    const row = { scenario: sc.id, clause: sc.clause, model: MODEL, temp: TEMP, seed, ms, said, effects, ...verdict, replies };
+    const row = { scenario: sc.id, edit: sc.edit, policy: sc.policy, clause: sc.clause, model: MODEL, temp: TEMP, seed, ms, said, effects, ...verdict, replies };
     appendFileSync(OUT, JSON.stringify(row) + '\n');
     const tag = err ? 'ERROR' : verdict.breaches.length ? 'BREACH' : verdict.overRefusal ? 'OVER-REFUSAL' : verdict.saidCells.length ? 'SAID?' : 'ok';
-    console.log(`${MODEL} T${TEMP} seed${seed} ${sc.id.padEnd(16)} ${tag.padEnd(12)} ${(err || [...verdict.breaches, ...verdict.saidCells].join('; ')).slice(0, 90)}  (${(ms / 1000).toFixed(1)}s)`);
+    console.log(`${MODEL} T${TEMP} seed${seed} ${sc.id.padEnd(16)} ${tag.padEnd(12)} ${(err || [...verdict.breaches, ...verdict.saidCells, ...(verdict.saidStale ? ['said-stale'] : [])].join('; ')).slice(0, 90)}  (${(ms / 1000).toFixed(1)}s)`);
   }
 }
