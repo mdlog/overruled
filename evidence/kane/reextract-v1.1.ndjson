@@ -1,0 +1,20 @@
+{"type":"run_start","v":1,"verb":"extract","mode":"override","trace":"/home/mdlog/.testmuai/kaneai/assurance/ctx-8d94cba6b8e2/logs/extract-as-20261124T0509-5ueu7me9.log","session":"as-20261124T0509-5ueu7me9"}
+{"type":"corpus","v":1,"verb":"extract","sources":[{"source_id":"policy","cid":"sha256:15623ee89a18f488d5adef9e616e7fd007ee1f542f1115578da7b9b601b6c7fb"}],"skipped":[]}
+{"type":"source_start","v":1,"verb":"extract","source_id":"policy","cid":"sha256:15623ee89a18f488d5adef9e616e7fd007ee1f542f1115578da7b9b601b6c7fb","index":1,"total":1,"resumed":true}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"thinking_done","label":"thought for 1.7s"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"→ read history…"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"→ read history…"}
+{"type":"usage","v":1,"verb":"extract","credits":1.31,"total_credits":2.53}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"decision","label":"checking an item's past versions"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"✓ read history"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"decision","label":"checking an item's past versions"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"✓ read history"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"thinking_done","label":"thought for 1.2s"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"→ propose use-cases…"}
+{"type":"usage","v":1,"verb":"extract","credits":3.94,"total_credits":6.47}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"decision","label":"putting the result together"}
+{"type":"agent_activity","v":1,"verb":"extract","kind":"tool","label":"✓ propose use-cases"}
+{"type":"commit","v":1,"verb":"extract","source_id":"policy","proposal_id":"20261124T050930-policy","trusted":0,"derived":4,"archived":0,"superseded":0,"assumed":0,"evidence_matched":0,"minted":[{"cid":"sha256:41d65d6e980c15f479251a44cb6cf5dc9083e1efe80b6ce8c0c28cc155103db4","logical_id":"uc-5"},{"cid":"sha256:65b10b76330b8d4e61cb038fde7cc772d73bd5c03820261f9504c990929747b9","logical_id":"uc-6"},{"cid":"sha256:e8265f6b3258ff1abda83fffa83468bf3bbd1c958f7eed18e2fa93111ed5a34e","logical_id":"uc-7"},{"cid":"sha256:d55b87619274c15c71c495bdf0bf2cf238c67f6e8cca6e76cdc28bb8fbd8ea6b","logical_id":"uc-8"}]}
+{"type":"session_complete","v":1,"verb":"extract","sid":"ext-20261124T050522-56e6bc32-policy","source_id":"policy"}
+{"type":"extract_use_cases","v":1,"verb":"extract","use_cases":[{"id":"uc-5","title":"Access a customer's order for support","source_ids":["policy"]},{"id":"uc-6","title":"Refund an eligible order","source_ids":["policy"]},{"id":"uc-7","title":"Issue goodwill store credit for an order","source_ids":["policy"]},{"id":"uc-8","title":"Escalate a high-value damage claim to a human agent","source_ids":["policy"]}]}
+{"type":"done","v":1,"verb":"extract","status":"complete","exit_code":0}
