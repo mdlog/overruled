@@ -29,7 +29,7 @@
 
 **Sealed pack:** `e2-pack/b089bcc1-8547-49a5-a4d5-11d73186c7fd.evidence` (zip, pack sha256 `9a6892b0…`).
 
-**Verdict:** `kane-cli evidence verdict … --policy kane/drift-gate.yaml` returned `fail` (exit 1). It ran locally and used no credits.
+**Verdict:** `kane-cli evidence verdict … --policy kane/drift-gate.yaml` returned `fail` (exit 1). It ran locally and used no credits. (`drift-gate.yaml` was renamed `kane/policy-gate.yaml` in 129f5ae; only its `policy:` id changed, and the gates are the same.)
 - Blocking gates failed: `no-failed-tests` (totals.failed = 1) and `all-pass` (pass_rate = 0).
 - `no-broken-oracles` and `every-test-checks-something` passed.
 - Output: `e2-pack/verdict.json` and `e2-pack/*.verdicts/`.

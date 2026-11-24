@@ -2,7 +2,7 @@
  {
   "n": 1,
   "files_changed": [
-   "arget/README.md",
+   "target/README.md",
    "target/policy.md",
    "target/src/app.js",
    "target/src/assistant.js",

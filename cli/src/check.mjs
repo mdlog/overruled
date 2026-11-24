@@ -216,7 +216,8 @@ export async function check(opts) {
   for (let n = 1; n <= max; n++) {
     log(`attempt ${n}: Claude Code is fixing…`);
     const agent = runAgent(cfg, root, prompt, join(out, `attempt-${n}.jsonl`));
-    const files = git(`status --porcelain -- ${cfg.app.dir}`).split('\n').filter(Boolean).map((l) => l.slice(3));
+    // porcelain is "XY path"; git() trims the output, so the first line may have lost its leading space
+    const files = git(`status --porcelain -- ${cfg.app.dir}`).split('\n').filter(Boolean).map((l) => l.replace(/^\s*\S{1,2}\s+/, ''));
     const t = npmTest(cfg, root);
     const fixedPolicy = readFileSync(join(root, cfg.policy), 'utf8');
     const res = residual(cfg, root, oldPolicy, fixedPolicy);

@@ -10,10 +10,10 @@
 #      must judge false.
 #   5. The credit balance is logged before and after.
 #
-# Usage: kane/green-read.sh [--precheck-only]
+# Usage: [OUT=<dir>] kane/green-read.sh [--precheck-only]
 set -u
 cd "$(dirname "$0")/.."
-OUT=evidence/kane/green-read
+OUT=${OUT:-evidence/kane/green-read}   # set OUT to keep a new take apart from the committed record
 mkdir -p "$OUT"
 PATTERN="disable-warning=ExperimentalWarning server[.]js"
 FIX=5652674

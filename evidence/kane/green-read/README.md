@@ -12,7 +12,7 @@
 | The text near the top of the page says refunds are available within 30 days of delivery. | false | **false** | (same sentence) |
 
 ## Why it is shaped like this
-Only 15.03 credits were left. The red run (`../e2-run.md`) was a 26-step agent run and cost 87.4. So the run was split:
+Only 15.03 credits were left. The red run (`../e2-run.md`) was a full agent run and cost 87.4. So the run was split:
 
 1. **The conversation ran in the probe (labelled).** It used `spike/probe.mjs` → `/api/chat`, the endpoint the chat widget posts to: qwen3:8b at temperature 0, seed 1, under the e2 policy (60 days).
    - Reply 1: "Our refund window is **60 days from delivery**".

@@ -52,7 +52,7 @@ Config: `overruled.config.json` (Kane objective, the keys Kane stores, the fix c
 
 | Claim | Source | How |
 |---|---|---|
-| Kane catches the bug: bot says 60, then refuses under 30; 1042 stays DELIVERED | `evidence/kane/e2-run.md`, `e2-run.ndjson`, `e2-pack/` | **Kane** `run --agent`, 26 steps, 321.8 s, 87.4 credits. `failed`, `confirmed_product_bug`; the policy verdict fails 2 blocking checks |
+| Kane catches the bug: bot says 60, then refuses under 30; 1042 stays DELIVERED | `evidence/kane/e2-run.md`, `e2-run.ndjson`, `e2-pack/` | **Kane** `run --agent`, one full run in Chrome, 321.8 s, 87.4 credits. `failed`, `confirmed_product_bug`; the policy verdict fails 2 blocking checks |
 | The agent's tests assert the bug | `evidence/npm-test-under-e2.txt` | `npm test` under the edited policy: 32/32 pass |
 | The 4 lines that restated 30 days | `evidence/loop/…/packet.json` | `overruled sites --from` (no Kane, no model) |
 | Claude Code fixes it in 1 attempt | `evidence/loop/2026-11-24T0720Z-fcbbf44/`, commit `5652674` | `claude -p` from the packet: 17 paths, `npm test` 62/62, residual 0, probe 4/4 |

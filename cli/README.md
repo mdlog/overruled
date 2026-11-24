@@ -2,10 +2,10 @@
 
 Your policy page says one thing. Your code says another. `overruled sites` lists every line in your codebase that restates a number from your policy page: constants, prompt text, tool schemas, refusal messages, page copy, database constraints and tests. That way, when someone edits the policy, you can see exactly what will quietly overrule them.
 
-No dependencies. No model. No network.
+No dependencies. No model. No network. Not on npm yet: run it straight from GitHub with `npx github:mdlog/overruled`.
 
 ```sh
-npx overruled sites policy.md src/
+npx github:mdlog/overruled sites policy.md src/
 ```
 
 ```
@@ -29,14 +29,14 @@ npx overruled sites policy.md src/
 To search only for the numbers that changed, using their **old** values:
 
 ```sh
-npx overruled sites policy.md . --from HEAD~1:policy.md
+npx github:mdlog/overruled sites policy.md . --from HEAD~1:policy.md
 # §2 Refund window: 30 days → 60 days (loosen)
 ```
 
 To fail CI while any source line still restates a policy number:
 
 ```sh
-npx overruled sites policy.md . --residual   # exit 1 while any source line restates a policy number
+npx github:mdlog/overruled sites policy.md . --residual   # exit 1 while any source line restates a policy number
 ```
 
 `--json` prints `{ diffs, numbers, sites[] }`, where each site has `clause_id`, `file`, `line`, `text`, `kind` and `in_source`.
