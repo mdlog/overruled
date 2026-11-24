@@ -46,4 +46,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const { text, changed } = applyEdit(readFileSync(inPath, 'utf8'), spec);
   writeFileSync(outPath, text);
   console.error(`applied: prose in ${[...new Set(changed.prose)].join(', ') || 'none'}; block keys ${changed.block.join(', ') || 'none (no policy-values block)'}`);
+  const missed = Object.keys(spec.edit || {}).filter((c) => !changed.prose.includes(c));
+  if (missed.length) {
+    // a half-applied edit: the block may now disagree with the prose (the store should fail closed)
+    console.error(`WARNING: no prose matched in ${missed.join(', ')} (is "from" the value the policy states today?)`);
+    process.exitCode = 3;
+  }
 }
