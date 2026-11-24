@@ -8,6 +8,8 @@
 //   overruled check [--config overruled.config.json] [--from REV] [--recorded run.ndjson --recorded-verdict v.json --recorded-pack p.evidence]
 //                   [--max-attempts 3] [--kane-green] [--packet-only] [--no-commit]
 //       the loop: Kane as the customer -> packet -> Claude Code -> free checks -> green
+//   overruled case <evidence/loop/CASE> [--pack p.evidence] [--frame-step N] [--callouts c.json] [--heldout h.json] [--out f.html]
+//       one static, offline page for a case (screenshots and fonts embedded)
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -15,7 +17,7 @@ import { parsePolicy, diffPolicies } from '../src/policy.mjs';
 import { findSites } from '../src/sites.mjs';
 
 const argv = process.argv.slice(2);
-const VALUE_FLAGS = ['--from', '--exclude', '--config', '--recorded', '--recorded-verdict', '--recorded-pack', '--max-attempts'];
+const VALUE_FLAGS = ['--from', '--exclude', '--config', '--recorded', '--recorded-verdict', '--recorded-pack', '--max-attempts', '--pack', '--frame-step', '--callouts', '--heldout', '--out'];
 const flag = (n) => argv.includes(n);
 const opt = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : undefined; };
 const positional = argv.filter((a, i) => !a.startsWith('--') && !VALUE_FLAGS.includes(argv[i - 1]));
@@ -40,6 +42,18 @@ if (cmd === 'check') {
     packetOnly: flag('--packet-only'), noCommit: flag('--no-commit'),
   });
   process.exit(r.status === 'no-change' || r.status === 'green-already' || r.status === 'packet' || r.fixed ? 0 : 1);
+}
+if (cmd === 'case' && policyArg) {
+  const { writeCase, findRoot } = await import('../src/case-html.mjs');
+  const caseDir = resolve(policyArg);
+  const root = findRoot(caseDir);
+  const cfgPath = resolve(root, 'overruled.config.json');
+  const labels = existsSync(cfgPath) ? JSON.parse(readFileSync(cfgPath, 'utf8')).kane?.labels || {} : {};
+  const json = (p) => (p ? JSON.parse(readFileSync(resolve(p), 'utf8')) : undefined);
+  const r = writeCase({ caseDir, root, labels, pack: opt('--pack') && resolve(opt('--pack')), frameStep: opt('--frame-step'),
+    callouts: json(opt('--callouts')), heldout: json(opt('--heldout')), out: opt('--out') && resolve(opt('--out')) });
+  console.log(`overruled: wrote ${relative(process.cwd(), r.out)} (${Math.round(r.bytes / 1024)} KB, no network needed)`);
+  process.exit(0);
 }
 if (cmd !== 'sites' || !policyArg) {
   console.error('usage: overruled sites <policy.md> [dir] [--from <old-policy.md|REV:path>] [--json] [--source-only] [--residual] [--exclude <path>]');

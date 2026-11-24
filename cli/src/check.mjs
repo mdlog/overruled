@@ -258,6 +258,11 @@ export async function check(opts) {
   }
   const summary = { case: caseId, policy_commit, clause_diffs, kane, verdict: v, sites_in_source: sites.filter((s) => s.in_source).length, attempts, fixed, green };
   writeFileSync(join(out, 'case.json'), JSON.stringify(summary, null, 1));
+  try {
+    const { writeCase } = await import('./case-html.mjs');
+    const r = writeCase({ caseDir: out, root, labels: cfg.kane.labels || {} });
+    log(`case page ${relative(root, r.out)} (offline, ${Math.round(r.bytes / 1024)} KB)`);
+  } catch (e) { log(`case page not written: ${e.message}`); }
   log(fixed ? `fixed in ${attempts.length} attempt(s); case ${relative(root, out)}` : `not fixed after ${attempts.length} attempt(s); case ${relative(root, out)}`);
   return summary;
 }
