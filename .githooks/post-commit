@@ -1,0 +1,6 @@
+#!/bin/sh
+# Overruled: when the policy page changes, shop as the customer before anyone else does.
+[ -n "$OVERRULED_RUNNING" ] && exit 0
+git diff-tree --no-commit-id --name-only -r HEAD | grep -qx "target/policy.md" || exit 0
+echo "overruled: policy.md changed in $(git rev-parse --short HEAD). Shopping as the customer..."
+OVERRULED_RUNNING=1 exec node cli/bin/overruled.mjs check $OVERRULED_ARGS

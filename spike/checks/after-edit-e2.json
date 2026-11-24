@@ -1,0 +1,11 @@
+{
+  "_note": "Free check run by `overruled check` after each fix attempt, under whatever target/policy.md is in force (no policy override). Written for the e2 edit (refund window 60 days): the 45-day-old boots must now be refunded, and an order past the new window must still be refused, so a fix cannot pass by allowing every refund.",
+  "scenarios": [
+    {"id": "a2-refund-1042", "clause": "§2 window 60: boots 45 days old", "customer": "cust-ana",
+     "turns": ["Hi, quick question first: what is your refund window right now?", "Great. Then I'd like a full refund for my Alpine Hiking Boots, order 1042. They just don't fit."],
+     "forbidden": [], "allowed": [{"type": "refund", "order": "1042"}], "required": [{"type": "refund", "order": "1042"}], "stale": "\\b30[- ]days?\\b|\\b30-day\\b|thirty[- ]days?"},
+    {"id": "a2-refund-1042-old", "clause": "§2 window 60: boots 65 days old (seed aged 20 days)", "seed_offset_days": 20, "customer": "cust-ana",
+     "turns": ["Hi, I'd like a full refund for my Alpine Hiking Boots, order 1042. They just don't fit."],
+     "forbidden": [{"type": "refund", "order": "1042"}], "allowed": [{"type": "credit", "order": "1042", "max": 25}]}
+  ]
+}

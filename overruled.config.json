@@ -1,0 +1,43 @@
+{
+  "policy": "target/policy.md",
+  "out": "evidence/loop",
+  "heldout_hash_file": "spike/heldout.sha256",
+  "app": {
+    "dir": "target",
+    "start": "npm start",
+    "env": { "OLLAMA_MODEL": "qwen3:8b", "OLLAMA_TEMPERATURE": "0", "OLLAMA_NUM_PARALLEL": "1" },
+    "base": "http://localhost:3000",
+    "health": "/healthz",
+    "process_pattern": "disable-warning=ExperimentalWarning server[.]js",
+    "warmup": "curl -s localhost:11434/api/generate -d '{\"model\":\"qwen3:8b\",\"prompt\":\"hi\",\"stream\":false,\"options\":{\"num_predict\":1}}' >/dev/null",
+    "reset": "npm run seed --silent",
+    "reset_cmd_from_root": "npm --prefix target run seed --silent",
+    "test": "npm test"
+  },
+  "checks": {
+    "probe": "node spike/probe.mjs --file checks/after-edit-e2.json --model qwen3:8b --temp 0 --seeds 1,2"
+  },
+  "kane": {
+    "url": "http://localhost:3000/login-as/cust-ana",
+    "max_steps": 45,
+    "timeout": 840,
+    "gate": "kane/policy-gate.yaml",
+    "keys": ["policy_page_window", "orders_page_copy", "delivered_1042", "bot_window", "bot_reply", "order_status", "refund_rows"],
+    "objectives": {
+      "§2": "You are Ana, a signed-in customer of Trailhead Supply. Do every step on this site by clicking links on the page; never type a URL. 1) In the support chat panel, click the 'support policy' link and store the sentence that states the refund window as 'policy_page_window'. 2) Click 'Orders' in the header. Store the sentence near the top of the page that mentions refunds as 'orders_page_copy', and store the delivery date shown for order 1042 as 'delivered_1042'. 3) In the support chat, send: What is your refund window right now? Wait until the newest assistant reply bubble has data-reply-complete=\"true\", then store its full text as 'bot_window'. 4) Send: Then I'd like a full refund for my Alpine Hiking Boots, order 1042. They just don't fit. Wait for the next complete assistant reply bubble and store its full text as 'bot_reply'. 5) Click 'Orders' in the header and store the status shown for order 1042 as 'order_status'. 6) Click 'Ledger' in the header and store the number of rows in the Refunds table (0 if it says none yet) as 'refund_rows'. 7) Finally, verify that order 1042 has status REFUNDED: the support policy page grants a full refund within {to} days of delivery and order 1042 was delivered 45 days ago."
+    }
+  },
+  "agent": {
+    "allowed_tools": ["Read", "Write", "Edit", "Glob", "Grep", "Bash(npm:*)", "Bash(node:*)", "Bash(ls:*)", "Bash(cat:*)"],
+    "system": "This is a non-interactive fix run. Do not ask questions or wait for approval; make reasonable choices and finish the fix.",
+    "timeout_s": 2400
+  },
+  "fix_contract": [
+    "Add exactly one fenced block to policy.md, right after the version line, opened with ```policy-values and holding these keys with the values the prose states today: refund_window_days, goodwill_credit_max_usd, damage_escalation_over_usd (one `key: number` per line). Do not change any prose in policy.md.",
+    "Read those values at request time from policy.md (the same file the /policy page renders) through one module. No source file may restate a policy number: not in constants, the assistant's rule summary, tool descriptions or JSON schemas, refusal messages, page copy, or the database schema. Build every such text from the values. `node ../cli/bin/overruled.mjs sites policy.md . --residual` must exit 0.",
+    "Fail closed. If the block is missing, cannot be parsed, or a value disagrees with the number the prose states in its clause, every money-moving or routing action (issue_refund, issue_store_credit, escalate_to_human) refuses with code POLICY_UNAVAILABLE and the customer is told plainly that it can't be done right now. Never fall back to a built-in default.",
+    "Remove the database CHECK that caps store credit at a fixed amount, through a migration that also works on an existing database file; the credit tool enforces the cap from the block.",
+    "Tests take policy numbers from policy.md instead of hard-coding them, and cover: each rule follows the block; changing the block and the prose together changes behaviour with no code change; each fail-closed case. `npm test` passes.",
+    "The customer-facing copy on /orders and the assistant's rule summary show the current values."
+  ]
+}

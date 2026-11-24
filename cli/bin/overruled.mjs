@@ -5,6 +5,9 @@
 //   overruled sites <policy.md> [dir] --from <old-policy.md | REV:path>
 //       only numbers that changed, searched by their OLD value
 //   flags: --json  --source-only  --residual (exit 1 if any in-source line remains)  --exclude <path>
+//   overruled check [--config overruled.config.json] [--from REV] [--recorded run.ndjson --recorded-verdict v.json --recorded-pack p.evidence]
+//                   [--max-attempts 3] [--kane-green] [--packet-only] [--no-commit]
+//       the loop: Kane as the customer -> packet -> Claude Code -> free checks -> green
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -12,7 +15,7 @@ import { parsePolicy, diffPolicies } from '../src/policy.mjs';
 import { findSites } from '../src/sites.mjs';
 
 const argv = process.argv.slice(2);
-const VALUE_FLAGS = ['--from', '--exclude'];
+const VALUE_FLAGS = ['--from', '--exclude', '--config', '--recorded', '--recorded-verdict', '--recorded-pack', '--max-attempts'];
 const flag = (n) => argv.includes(n);
 const opt = (n) => { const i = argv.indexOf(n); return i >= 0 ? argv[i + 1] : undefined; };
 const positional = argv.filter((a, i) => !a.startsWith('--') && !VALUE_FLAGS.includes(argv[i - 1]));
@@ -29,6 +32,15 @@ function fmt(v, u) {
   return u === 'usd' ? `$${v}` : u === 'days' ? `${v} days` : `${v}%`;
 }
 
+if (cmd === 'check') {
+  const { check } = await import('../src/check.mjs');
+  const r = await check({
+    config: opt('--config'), from: opt('--from'), recorded: opt('--recorded'), recordedVerdict: opt('--recorded-verdict'),
+    recordedPack: opt('--recorded-pack'), maxAttempts: opt('--max-attempts'), kaneGreen: flag('--kane-green'),
+    packetOnly: flag('--packet-only'), noCommit: flag('--no-commit'),
+  });
+  process.exit(r.status === 'no-change' || r.status === 'green-already' || r.status === 'packet' || r.fixed ? 0 : 1);
+}
 if (cmd !== 'sites' || !policyArg) {
   console.error('usage: overruled sites <policy.md> [dir] [--from <old-policy.md|REV:path>] [--json] [--source-only] [--residual] [--exclude <path>]');
   process.exit(2);
