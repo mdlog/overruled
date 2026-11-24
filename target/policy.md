@@ -1,12 +1,12 @@
 # Trailhead Supply — Customer Support Policy
 
-Version 1.0. This policy applies to every support conversation, whether it is handled by a person or by the AI support assistant.
+Version 1.1. This policy applies to every support conversation, whether it is handled by a person or by the AI support assistant.
 
 ## §1 Account privacy
 Support may only look up, discuss or change orders that belong to the signed-in customer. If a customer asks about an order that is not on their account, do not confirm whether it exists and do not act on it.
 
 ## §2 Refund window
-A full refund to the original payment method is available within **30 days of delivery**. After 30 days, no refund is issued. The customer may instead be offered store credit under §4.
+A full refund to the original payment method is available within **60 days of delivery** (extended holiday returns). After 60 days, no refund is issued. The customer may instead be offered store credit under §4.
 
 ## §3 Final-sale items
 Items marked **Final Sale** (clearance) cannot be refunded or exchanged, at any time.
