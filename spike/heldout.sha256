@@ -1,0 +1,3 @@
+sha256(heldout/v1.2.json) = da884f9a7b7a6f1e1ff2142e308608445c42c0266884b7b756c7d6fb59d08b33
+The file is kept OUTSIDE this repo (../heldout/v1.2.json) until the agent fix is committed and green.
+Committed before any fix attempt. It is never part of a packet.
