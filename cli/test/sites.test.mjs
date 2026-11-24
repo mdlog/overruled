@@ -73,3 +73,17 @@ test('findSites catches literal and derived forms, and skips other numbers', () 
   assert.equal(t.kind, 'test');
   assert.equal(t.in_source, false);
 });
+
+test('a regex quantifier is not a policy number, even next to the word "refund"', () => {
+  const dir = fixture({
+    'src/claims.js': [
+      'const done = /\\brefund\\b[^.!?]{0,30}?\\bhas been issued/;', // 1: quantifier {0,30}
+      'const exact = /refund\\d{30}/;', // 2: quantifier {30}
+      'const open = /refund window.{30,}/;', // 3: quantifier {30,}
+      'const windowDays = 30; // refund window', // 4: a real restatement
+    ].join('\n'),
+  });
+  const numbers = parsePolicy(POLICY).flatMap((c) => c.numbers.map((n) => ({ clause_id: c.id, value: n.value, unit: n.unit })));
+  const lines = findSites(dir, numbers).filter((s) => s.file === 'src/claims.js').map((s) => s.line);
+  assert.deepEqual(lines, [4]);
+});

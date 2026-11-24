@@ -51,10 +51,12 @@ export function findSites(root, numbers, opts = {}) {
     const rel = relative(root, f);
     const lines = readFileSync(f, 'utf8').split('\n');
     lines.forEach((line, i) => {
+      // A regex quantifier ({30}, {0,30}, {30,}) is a length, not a policy number.
+      const scan = line.replace(/\{\d+(?:,\d*)?\}/g, '{n}');
       for (const n of numbers) {
         const p = patternsFor(n);
-        const strong = p.strong.some((re) => re.test(line));
-        const ctx = !strong && p.contextual && p.contextual.re.test(line) && p.contextual.context.test(line) && !/\.md$/.test(f);
+        const strong = p.strong.some((re) => re.test(scan));
+        const ctx = !strong && p.contextual && p.contextual.re.test(scan) && p.contextual.context.test(scan) && !/\.md$/.test(f);
         if (!strong && !ctx) continue;
         const kind = classify(rel, line);
         sites.push({
