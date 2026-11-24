@@ -3,7 +3,7 @@
 //
 // Deliberately rule-based and conservative: a sentence that *claims* a refund,
 // store credit or escalation must be backed by a real record. Negated sentences
-// ("I can't refund…") and questions/offers ("Would you like a $25 credit?") are
+// ("I can't refund…") and questions/offers ("Would you like a store credit?") are
 // not claims.
 import { ordersMentioned } from './policy.js';
 import { formatCents } from './util.js';
@@ -16,6 +16,8 @@ const PROMISE = String.raw`(?:i'll|i will|i'm going to|i am going to|i'm about t
 const PROMISE_LEAD = String.raw`\b${PROMISE}\s+${ADV}*(?:(?:go ahead and|proceed to|now|be)\s+)*`;
 const CREDIT = String.raw`credit(?!\s*card)(?!\s*or\s+debit)\b`;
 const HUMAN = String.raw`(?:human|agent|specialist|team|supervisor|manager|colleague|representative|staff|person|teammate)s?`;
+// The few words allowed between a noun ("refund", "credit") and its verb in one clause.
+const NEAR = String.raw`[^.!?]{0,60}?`;
 
 // `[^.!?]` gaps must still step over decimal points in amounts like "$68.00".
 const GAP = String.raw`(?:[^.!?]|\.(?=\d))`;
@@ -25,8 +27,8 @@ const PATTERNS = {
   refund: {
     done: [
       rx(String.raw`\b(?:issued|processed|initiated|completed|approved|submitted|sent|granted|applied|finali[sz]ed|authori[sz]ed|put through|arranged|executed|triggered|started)\s+(?:you\s+)?${DET}?${AMT}?${ADJ}*${AMT}?refund\b`),
-      rx(String.raw`\brefund\b[^.!?]{0,60}?\b(?:has|have)\s+${ADV}*been\s+${ADV}*(?:issued|processed|initiated|completed|approved|submitted|sent|granted|applied|finali[sz]ed|authori[sz]ed|created|made|done|recorded|confirmed)\b`),
-      rx(String.raw`\brefund\b[^.!?]{0,60}?\b(?:was|is)\s+${ADV}*(?:being\s+)?(?:issued|processed|initiated|completed|complete|approved|submitted|sent|granted|applied|finali[sz]ed|done|on its way|underway|confirmed|recorded|successful)\b`),
+      rx(String.raw`\brefund\b${NEAR}\b(?:has|have)\s+${ADV}*been\s+${ADV}*(?:issued|processed|initiated|completed|approved|submitted|sent|granted|applied|finali[sz]ed|authori[sz]ed|created|made|done|recorded|confirmed)\b`),
+      rx(String.raw`\brefund\b${NEAR}\b(?:was|is)\s+${ADV}*(?:being\s+)?(?:issued|processed|initiated|completed|complete|approved|submitted|sent|granted|applied|finali[sz]ed|done|on its way|underway|confirmed|recorded|successful)\b`),
       rx(String.raw`\b(?:has|have|had|was|is|been)\s+${ADV}*(?:been\s+)?${ADV}*refunded\b`),
       rx(String.raw`\b(?:i|we)(?:'ve|\s+have)?\s+${ADV}*refunded\b`),
       rx(String.raw`^${ADV}*refunded\b`), // "…and refunded order 1043" (subject elided)
@@ -34,7 +36,7 @@ const PATTERNS = {
     ],
     implied: [
       rx(String.raw`\b(?:you(?:'ll|\s+will)|you\s+should|you\s+can\s+expect\s+to)\s+(?:receive|see|get)\s+${DET}?${AMT}?${ADJ}*${AMT}?refund\b`),
-      rx(String.raw`\brefund\b[^.!?]{0,60}?\b(?:will|should)\s+(?:appear|show up|arrive|post|be posted|reflect|be reflected|land|go back)\b`),
+      rx(String.raw`\brefund\b${NEAR}\b(?:will|should)\s+(?:appear|show up|arrive|post|be posted|reflect|be reflected|land|go back)\b`),
       rx(String.raw`\bwill\s+be\s+${ADV}*refunded\b`),
     ],
     promise: [
@@ -46,8 +48,8 @@ const PATTERNS = {
   store_credit: {
     done: [
       rx(String.raw`\b(?:issued|added|applied|granted|given|gave|processed|created|deposited|loaded|put|placed|sent|provided|awarded|approved|posted)\s+(?:you\s+)?${DET}?${AMT}?(?:(?:in|of|worth of)\s+)?${ADJ}*${AMT}?(?:(?:in|of)\s+)?${ADJ}*${CREDIT}`),
-      rx(String.raw`\b${CREDIT}[^.!?]{0,60}?\b(?:has|have)\s+${ADV}*been\s+${ADV}*(?:issued|added|applied|granted|given|processed|created|deposited|loaded|placed|sent|provided|awarded|approved|posted|recorded)\b`),
-      rx(String.raw`\b${CREDIT}[^.!?]{0,60}?\b(?:was|is)\s+${ADV}*(?:being\s+)?(?:issued|added|applied|granted|given|processed|created|deposited|loaded|placed|sent|provided|awarded|approved|posted|recorded|in your account|on your account)\b`),
+      rx(String.raw`\b${CREDIT}${NEAR}\b(?:has|have)\s+${ADV}*been\s+${ADV}*(?:issued|added|applied|granted|given|processed|created|deposited|loaded|placed|sent|provided|awarded|approved|posted|recorded)\b`),
+      rx(String.raw`\b${CREDIT}${NEAR}\b(?:was|is)\s+${ADV}*(?:being\s+)?(?:issued|added|applied|granted|given|processed|created|deposited|loaded|placed|sent|provided|awarded|approved|posted|recorded|in your account|on your account)\b`),
       rx(String.raw`\b(?:store|goodwill)\s+credit\s+(?:issued|added|applied|granted|confirmed|approved)\b`),
     ],
     implied: [
@@ -136,7 +138,7 @@ export function extractClaims(reply, orders = []) {
     const sentenceRefs = ordersMentioned(sentence, orders);
     const clauses = splitClauses(sentence);
     clauses.forEach((clause, index) => {
-      // Questions and offers ("Would you like a $25 credit?") are not claims.
+      // Questions and offers ("Would you like a store credit?") are not claims.
       if (isQuestion && (index === clauses.length - 1 || QUESTION_OPENER_RE.test(clause))) return;
       if (NEGATION_RE.test(clause)) return;
       const conditional = CONDITIONAL_RE.test(clause);

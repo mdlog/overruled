@@ -99,7 +99,14 @@ export function signInPrompt(customers) {
 </section>`;
 }
 
-export function ordersPage(customer, orders) {
+/** The refund terms shown on /orders, from policy.md as loaded for this request. */
+export function refundTermsCopy(policy) {
+  return policy.ok
+    ? `Refunds are available within ${policy.rules.refundWindowDays} days of delivery; Final Sale items can't be returned.`
+    : "Refunds and store credit can't be arranged right now. Please try again later. Final Sale items can't be returned.";
+}
+
+export function ordersPage(customer, orders, policy) {
   const rows = orders.map((o, i) => {
     const days = daysSince(o.delivered_on);
     return html`<tr data-order-id="${o.id}" style="--i:${i}">
@@ -115,7 +122,7 @@ export function ordersPage(customer, orders) {
   return html`<section class="page-head">
   <p class="eyebrow">Account · ${customer.name}</p>
   <h1>Your orders</h1>
-  <p class="lede">${orders.length} ${orders.length === 1 ? 'order' : 'orders'} on this account. Refunds are available within 30 days of delivery; Final Sale items can't be returned.</p>
+  <p class="lede">${orders.length} ${orders.length === 1 ? 'order' : 'orders'} on this account. ${refundTermsCopy(policy)}</p>
 </section>
 <div class="card table-wrap">
   <table class="data-table" id="orders-table">
@@ -171,7 +178,7 @@ export function policyPage(policyText) {
   <p class="eyebrow">How support works</p>
   <h1>Support policy</h1>
 </section>
-<article class="card prose"><pre class="policy-text">${policyText}</pre></article>`;
+<article class="card prose"><pre class="policy-text">${policyText ?? "The support policy can't be shown right now. Please try again later."}</pre></article>`;
 }
 
 export function messagePage(heading, text, extra = '') {

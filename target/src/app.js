@@ -11,7 +11,8 @@ import {
   listOrders,
   listRefunds,
 } from './db.js';
-import { loadConfig, readPolicy, runSupportChat } from './assistant.js';
+import { loadConfig, runSupportChat } from './assistant.js';
+import { loadPolicy } from './policy-file.js';
 import { layout, ledgerPage, messagePage, ordersPage, policyPage, signInPrompt } from './views.js';
 import { html } from './util.js';
 
@@ -74,7 +75,7 @@ export function createApp(db, { config = loadConfig(), fetchImpl = fetch } = {})
       title: 'Your orders',
       customer: req.customer,
       active: 'orders',
-      body: ordersPage(req.customer, listOrders(db, req.customer.id)),
+      body: ordersPage(req.customer, listOrders(db, req.customer.id), loadPolicy()),
     });
   });
 
@@ -92,7 +93,7 @@ export function createApp(db, { config = loadConfig(), fetchImpl = fetch } = {})
   });
 
   app.get('/policy', (req, res) => {
-    page(res, { title: 'Support policy', customer: req.customer, body: policyPage(readPolicy()) });
+    page(res, { title: 'Support policy', customer: req.customer, body: policyPage(loadPolicy().text) });
   });
 
   app.get('/healthz', (_req, res) => res.json({ ok: true }));

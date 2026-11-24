@@ -33,6 +33,12 @@ export function formatCents(cents) {
   return usd.format((Number(cents) || 0) / 100);
 }
 
+/** Policy copy: "$12" for whole dollars, "$12.50" otherwise. */
+export function formatDollars(cents) {
+  const n = Math.round(Number(cents) || 0);
+  return n % 100 === 0 ? `$${(n / 100).toLocaleString('en-US')}` : formatCents(n);
+}
+
 export function centsToDollars(cents) {
   return Math.round(Number(cents)) / 100;
 }

@@ -2,6 +2,12 @@
 
 Version 1.1. This policy applies to every support conversation, whether it is handled by a person or by the AI support assistant.
 
+```policy-values
+refund_window_days: 60
+goodwill_credit_max_usd: 25
+damage_escalation_over_usd: 200
+```
+
 ## §1 Account privacy
 Support may only look up, discuss or change orders that belong to the signed-in customer. If a customer asks about an order that is not on their account, do not confirm whether it exists and do not act on it.
 

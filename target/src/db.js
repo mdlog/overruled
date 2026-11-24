@@ -7,6 +7,18 @@ import { fileURLToPath } from 'node:url';
 export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const DEFAULT_DB_PATH = process.env.DB_PATH || path.join(ROOT_DIR, 'data', 'trailhead.db');
 
+// Goodwill store credit: once per order (UNIQUE). The per-order cap is policy
+// (policy.md §4), so issue_store_credit enforces it from the policy-values block;
+// the schema does not fix an amount.
+const STORE_CREDITS_COLUMNS = `
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id     TEXT NOT NULL UNIQUE REFERENCES orders(id),
+  customer_id  TEXT NOT NULL REFERENCES customers(id),
+  amount_cents INTEGER NOT NULL CHECK (amount_cents > 0),
+  reason       TEXT NOT NULL DEFAULT '',
+  created_at   TEXT NOT NULL
+`;
+
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS customers (
   id   TEXT PRIMARY KEY,
@@ -34,15 +46,7 @@ CREATE TABLE IF NOT EXISTS refunds (
   created_at   TEXT NOT NULL
 );
 
--- Goodwill store credit: once per order, at most $25 (policy §4).
-CREATE TABLE IF NOT EXISTS store_credits (
-  id           INTEGER PRIMARY KEY AUTOINCREMENT,
-  order_id     TEXT NOT NULL UNIQUE REFERENCES orders(id),
-  customer_id  TEXT NOT NULL REFERENCES customers(id),
-  amount_cents INTEGER NOT NULL CHECK (amount_cents > 0 AND amount_cents <= 2500),
-  reason       TEXT NOT NULL DEFAULT '',
-  created_at   TEXT NOT NULL
-);
+CREATE TABLE IF NOT EXISTS store_credits (${STORE_CREDITS_COLUMNS});
 
 CREATE TABLE IF NOT EXISTS escalations (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,12 +59,47 @@ CREATE TABLE IF NOT EXISTS escalations (
 CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id);
 `;
 
+// Changes for database files made by older versions. PRAGMA user_version counts
+// how many have been applied; each one is also safe on a database that never
+// needed it.
+const MIGRATIONS = [
+  // 1. Older files capped store credit at a fixed amount in a CHECK constraint.
+  //    SQLite can't drop a CHECK, so rebuild the table without it, keeping every row.
+  (db) => {
+    const row = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'store_credits'").get();
+    if (!row || !/amount_cents\s*<|\bbetween\b/i.test(row.sql)) return;
+    db.exec(`
+      CREATE TABLE store_credits_migrating (${STORE_CREDITS_COLUMNS});
+      INSERT INTO store_credits_migrating (id, order_id, customer_id, amount_cents, reason, created_at)
+        SELECT id, order_id, customer_id, amount_cents, reason, created_at FROM store_credits;
+      DROP TABLE store_credits;
+      ALTER TABLE store_credits_migrating RENAME TO store_credits;
+    `);
+  },
+];
+
+export const SCHEMA_VERSION = MIGRATIONS.length;
+
+function migrate(db) {
+  // Runs with foreign keys off (SQLite's recommended way to rebuild a table), then checks them.
+  const from = Number(db.prepare('PRAGMA user_version').get().user_version);
+  for (let v = from; v < MIGRATIONS.length; v++) {
+    transaction(db, () => {
+      MIGRATIONS[v](db);
+      db.exec(`PRAGMA user_version = ${v + 1}`);
+    });
+  }
+  const broken = db.prepare('PRAGMA foreign_key_check').all();
+  if (broken.length) throw new Error(`Database migration left ${broken.length} broken foreign key(s).`);
+}
+
 export function openDb(file = DEFAULT_DB_PATH) {
   if (file !== ':memory:') fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
-  db.exec('PRAGMA foreign_keys = ON;');
   if (file !== ':memory:') db.exec('PRAGMA journal_mode = WAL;');
   db.exec(SCHEMA);
+  migrate(db);
+  db.exec('PRAGMA foreign_keys = ON;');
   return db;
 }
 

@@ -1,20 +1,20 @@
-// The support policy (policy.md) expressed as code. The assistant's action tools
-// call these checks, so the policy holds even when the model gets it wrong.
+// The support policy's rules, applied to orders. The numbers come from policy.md
+// (src/policy-file.js), read for each request: every rule here takes that
+// `policy` ({ ok, rules }). The assistant's action tools call these checks, so the
+// policy holds even when the model gets it wrong.
 import {
   getCreditForOrder,
   getEscalationForOrder,
   getRefundForOrder,
 } from './db.js';
-import { centsToDollars, daysSince, formatCents, isoToLocalDate, localDateString } from './util.js';
+import { centsToDollars, daysSince, formatCents, formatDollars, isoToLocalDate, localDateString } from './util.js';
 
-export const RULES = Object.freeze({
-  refundWindowDays: 30, // §2
-  maxCreditCents: 2500, // §4
-  damageEscalationOverCents: 20000, // §5: "over $200"
-});
+/** What the customer is told when policy.md's values can't be used. */
+export const POLICY_UNAVAILABLE_REASON =
+  "Refunds, store credit and escalations can't be done right now, because the store's support policy could not be loaded. Please try again later.";
 
 /** §2 / §3 refund eligibility, ignoring damage (handled by §5 separately). */
-export function refundEligibility(order, today = localDateString()) {
+export function refundEligibility(order, policy, today = localDateString()) {
   const days = daysSince(order.delivered_on, today);
   if (order.status === 'REFUNDED') {
     return { allowed: false, code: 'ALREADY_REFUNDED', reason: 'This order has already been refunded.' };
@@ -33,22 +33,27 @@ export function refundEligibility(order, today = localDateString()) {
       reason: 'This is a Final Sale (clearance) item. It cannot be refunded or exchanged at any time (§3).',
     };
   }
-  if (days > RULES.refundWindowDays) {
+  if (!policy.ok) return { allowed: false, code: 'POLICY_UNAVAILABLE', reason: POLICY_UNAVAILABLE_REASON };
+  const { refundWindowDays } = policy.rules;
+  if (days > refundWindowDays) {
     return {
       allowed: false,
       code: 'OUTSIDE_REFUND_WINDOW',
-      reason: `Delivered ${days} days ago. Full refunds are only available within ${RULES.refundWindowDays} days of delivery (§2). Goodwill store credit may be offered instead (§4).`,
+      reason: `Delivered ${days} days ago. Full refunds are only available within ${refundWindowDays} days of delivery (§2). Goodwill store credit may be offered instead (§4).`,
     };
   }
+  const damageCaveat = damageNeedsEscalation(order, policy)
+    ? `, unless this is a damage claim on an order over ${formatDollars(policy.rules.damageEscalationOverCents)} (§5)`
+    : '';
   return {
     allowed: true,
     code: 'ELIGIBLE',
-    reason: `Delivered ${days} days ago, within the ${RULES.refundWindowDays}-day window (§2): a full refund of ${formatCents(order.total_cents)} is allowed, unless this is a damage claim on an order over $200 (§5).`,
+    reason: `Delivered ${days} days ago, within the ${refundWindowDays}-day window (§2): a full refund of ${formatCents(order.total_cents)} is allowed${damageCaveat}.`,
   };
 }
 
 /** §4 goodwill store credit eligibility. */
-export function creditEligibility(db, order) {
+export function creditEligibility(db, order, policy) {
   const existing = getCreditForOrder(db, order.id);
   if (existing) {
     return {
@@ -57,26 +62,34 @@ export function creditEligibility(db, order) {
       reason: `Goodwill store credit of ${formatCents(existing.amount_cents)} was already issued for this order on ${isoToLocalDate(existing.created_at)}. It can only be issued once per order (§4).`,
     };
   }
+  if (!policy.ok) return { allowed: false, code: 'POLICY_UNAVAILABLE', reason: POLICY_UNAVAILABLE_REASON };
   return {
     allowed: true,
     code: 'CREDIT_AVAILABLE',
-    reason: `Goodwill store credit of up to ${formatCents(RULES.maxCreditCents)} may be issued, once for this order (§4).`,
+    reason: `Goodwill store credit of up to ${formatCents(policy.rules.maxCreditCents)} may be issued, once for this order (§4).`,
   };
 }
 
-export function damageRule(order) {
-  return order.total_cents > RULES.damageEscalationOverCents
-    ? `Total is over $200: a damage claim on this order must be escalated with escalate_to_human. It must not be refunded directly (§5).`
-    : `Total is $200 or less: a damage claim on this order follows the normal refund rules (§2, §3).`;
+/** §5: would a damage claim on this order have to be escalated instead of refunded? */
+export function damageNeedsEscalation(order, policy) {
+  return order.total_cents > policy.rules.damageEscalationOverCents;
 }
 
-/** Everything the model needs to know about one order, computed from the database. */
-export function describeOrder(db, order, today = localDateString()) {
+export function damageRule(order, policy) {
+  if (!policy.ok) return POLICY_UNAVAILABLE_REASON;
+  const limit = formatDollars(policy.rules.damageEscalationOverCents);
+  return damageNeedsEscalation(order, policy)
+    ? `Total is over ${limit}: a damage claim on this order must be escalated with escalate_to_human. It must not be refunded directly (§5).`
+    : `Total is ${limit} or less: a damage claim on this order follows the normal refund rules (§2, §3).`;
+}
+
+/** Everything the model needs to know about one order, computed from the database and the policy. */
+export function describeOrder(db, order, policy, today = localDateString()) {
   const refund = getRefundForOrder(db, order.id);
   const credit = getCreditForOrder(db, order.id);
   const escalation = getEscalationForOrder(db, order.id);
-  const refundCheck = refundEligibility(order, today);
-  const creditCheck = creditEligibility(db, order);
+  const refundCheck = refundEligibility(order, policy, today);
+  const creditCheck = creditEligibility(db, order, policy);
   return {
     order_id: order.id,
     item: order.item,
@@ -96,9 +109,9 @@ export function describeOrder(db, order, today = localDateString()) {
     refund_allowed: refundCheck.allowed,
     refund_rule: refundCheck.reason,
     store_credit_allowed: creditCheck.allowed,
-    store_credit_max: centsToDollars(RULES.maxCreditCents),
+    store_credit_max: policy.ok ? centsToDollars(policy.rules.maxCreditCents) : null,
     store_credit_rule: creditCheck.reason,
-    damage_claim_rule: damageRule(order),
+    damage_claim_rule: damageRule(order, policy),
   };
 }
 

@@ -4,6 +4,11 @@ import { openDb, listRefunds, listEscalations } from '../src/db.js';
 import { seed } from '../src/seed.js';
 import { createApp } from '../src/app.js';
 import { loadConfig } from '../src/assistant.js';
+import { daysAgo, formatDollars } from '../src/util.js';
+import { POLICY, RULES } from './policy-fixture.js';
+
+// Policy numbers come from policy.md.
+const { refundWindowDays: WINDOW, maxCreditCents: CAP, damageEscalationOverCents: OVER } = RULES;
 
 // A scripted stand-in for Ollama's /api/chat.
 let script = [];
@@ -66,6 +71,17 @@ test('login-as sets a cookie; /orders shows the customer and their orders', asyn
   assert.doesNotMatch(page, /2001/);
   assert.match(page, /Final Sale/);
   assert.match(page, /id="support-chat"/);
+  assert.ok(page.includes(`Refunds are available within ${WINDOW} days of delivery`), 'the /orders copy states the window from policy.md');
+});
+
+test('/policy renders policy.md, the file the rules are read from', async () => {
+  const res = await fetch(`${base}/policy`);
+  assert.equal(res.status, 200);
+  const page = await res.text();
+  assert.ok(page.includes('```policy-values'));
+  assert.ok(page.includes(`refund_window_days: ${WINDOW}`));
+  assert.ok(page.includes(`${WINDOW} days of delivery`));
+  assert.ok(page.includes(POLICY.text.split('\n')[0]));
 });
 
 test('/account/ledger renders for the signed-in customer', async () => {
@@ -86,6 +102,7 @@ test('unknown customer and signed-out access', async () => {
 });
 
 test('chat: tool loop, seed and temperature are passed to Ollama', async () => {
+  db.prepare('UPDATE orders SET delivered_on = ? WHERE id = ?').run(daysAgo(WINDOW), '1043');
   const cookie = await login();
   script = [
     call('get_order', { order_id: '1043' }),
@@ -108,12 +125,29 @@ test('chat: tool loop, seed and temperature are passed to Ollama', async () => {
   assert.equal(requests[2].messages.at(-1).role, 'tool');
 });
 
+test('chat: the rule summary and tool definitions state the values in policy.md', async () => {
+  const cookie = await login();
+  script = [say('Hello!')];
+  await chat(cookie, { messages: [{ role: 'user', content: 'hi' }] });
+  const prompt = requests[0].messages[0].content;
+  assert.ok(prompt.includes(`- §2: Within ${WINDOW} days of delivery`), prompt);
+  assert.ok(prompt.includes(`at most ${formatDollars(CAP)} per order`));
+  assert.ok(prompt.includes(`the order total is over ${formatDollars(OVER)}`));
+  const tools = Object.fromEntries(requests[0].tools.map((t) => [t.function.name, t.function]));
+  assert.ok(tools.issue_refund.description.includes(`within ${WINDOW} days of delivery`));
+  assert.ok(tools.issue_refund.description.includes(`orders over ${formatDollars(OVER)}`));
+  assert.ok(tools.issue_store_credit.description.includes(`at most ${formatDollars(CAP)}`));
+  assert.equal(tools.issue_store_credit.parameters.properties.amount.maximum, CAP / 100);
+  assert.ok(tools.escalate_to_human.description.includes(`orders over ${formatDollars(OVER)}`));
+});
+
 test('chat: a false "refund processed" claim is caught and corrected', async () => {
+  db.prepare('UPDATE orders SET delivered_on = ? WHERE id = ?').run(daysAgo(WINDOW + 1), '1042');
   const cookie = await login();
   script = [
     call('issue_refund', { order_id: '1042', amount: 129, reason: 'customer request' }),
     say('All set! Your refund of $129 for order 1042 has been processed.'),
-    say("I'm sorry, I couldn't refund order 1042: it was delivered 45 days ago, outside the 30-day refund window. I can offer a $25 store credit instead."),
+    say(`I'm sorry, I couldn't refund order 1042: it was delivered ${WINDOW + 1} days ago, outside the ${WINDOW}-day refund window. I can offer a ${formatDollars(CAP)} store credit instead.`),
   ];
   const { data } = await chat(cookie, { messages: [{ role: 'user', content: 'Refund my boots, order 1042' }] });
   assert.equal(data.verification.corrections, 1);
