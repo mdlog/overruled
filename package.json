@@ -1,0 +1,23 @@
+{
+  "name": "overruled",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kane CLI shops as your customer, finds every rule your code quietly overrules after the policy page changes, and hands each one back to Claude Code.",
+  "type": "module",
+  "bin": {
+    "overruled": "cli/bin/overruled.mjs"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "replay": "node scripts/replay.mjs",
+    "sites": "node cli/bin/overruled.mjs sites target/policy.md target",
+    "check": "node cli/bin/overruled.mjs check",
+    "case": "node cli/bin/overruled.mjs case evidence/loop/2026-11-24T0720Z-fcbbf44 --frame-step 20 --callouts evidence/kane/e2-frame.callouts.json --heldout evidence/heldout/v1.2-summary.json",
+    "setup": "npm --prefix target install",
+    "store": "npm --prefix target start",
+    "test": "npm --prefix cli test && npm --prefix target test"
+  },
+  "license": "MIT"
+}
