@@ -1,0 +1,325 @@
+{
+ "id": "2026-11-24T0720Z-fcbbf44",
+ "policy_commit": "fcbbf44",
+ "clause_diffs": [
+  {
+   "clause_id": "§2",
+   "title": "Refund window",
+   "unit": "days",
+   "from": 30,
+   "to": 60,
+   "direction": "loosen"
+  }
+ ],
+ "kane": {
+  "status": "failed",
+  "reason_code": "assertion_error.confirmed_product_bug",
+  "one_liner": "Order 1042 was denied a full refund even though it was delivered 45 days ago and the support policy says full refunds are available for 60 days.",
+  "credits": 87.37644749999998,
+  "values": {
+   "policy_page_window": "A full refund to the original payment method is available within **60 days of delivery** (extended holiday returns).",
+   "orders_page_copy": "4 orders on this account. Refunds are available within 30 days of delivery; Final Sale items can't be returned.",
+   "delivered_1042": "2026-10-10",
+   "bot_window": "The refund window is 60 days from the delivery date. If you'd like to process a refund for an eligible order, let me know the order number!",
+   "bot_reply": "The refund window for order 1042 (Alpine Hiking Boots) has passed, as it was delivered 45 days ago. Full refunds are only available within 30 days of delivery. However, I can issue goodwill store credit of up to $25 for this order. Would you like to proceed with store credit instead?",
+   "order_status": "DELIVERED",
+   "refund_rows": "0"
+  },
+  "source": "run_end.context.variables",
+  "missing": [],
+  "pack": "evidence/kane/e2-pack/b089bcc1-8547-49a5-a4d5-11d73186c7fd.evidence",
+  "recorded": "evidence/kane/e2-run.ndjson"
+ },
+ "verdict": {
+  "result": "fail",
+  "failed_gates": [
+   "no-failed-tests",
+   "all-pass"
+  ],
+  "pack_sha256": "9a6892b07c3d41a928c3e829f360e53306bdbce65aad51144e0e2c2fc75ffb92"
+ },
+ "sites": [
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "README.md",
+   "line": 56,
+   "text": "2. **Tools.** The tools enforce the policy in code: ownership (§1), the 30-day window (§2), Final Sale (§3), $25 once per order (§4), and no direct refund for d",
+   "kind": "readme",
+   "in_source": false,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "src/assistant.js",
+   "line": 107,
+   "text": "- §2: Within 30 days of delivery, a refund is for the full order total (call issue_refund). After 30 days, no refund. Offer goodwill store credit instead.",
+   "kind": "prompt",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "src/policy.js",
+   "line": 11,
+   "text": "refundWindowDays: 30, // §2",
+   "kind": "constant",
+   "in_source": true,
+   "match": "contextual"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "src/tools.js",
+   "line": 50,
+   "text": "'Refund an order to the original payment method. Only allowed within 30 days of delivery, never for Final Sale items, and never for damage claims on orders over",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "src/views.js",
+   "line": 118,
+   "text": "<p class=\"lede\">${orders.length} ${orders.length === 1 ? 'order' : 'orders'} on this account. Refunds are available within 30 days of delivery; Final Sale items",
+   "kind": "page-copy",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "test/app.test.js",
+   "line": 116,
+   "text": "say(\"I'm sorry, I couldn't refund order 1042: it was delivered 45 days ago, outside the 30-day refund window. I can offer a $25 store credit instead.\"),",
+   "kind": "test",
+   "in_source": false,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "test/claims.test.js",
+   "line": 44,
+   "text": "'A full refund is available within 30 days of delivery.',",
+   "kind": "test",
+   "in_source": false,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "test/claims.test.js",
+   "line": 109,
+   "text": "const attempts = [{ tool: 'issue_refund', order_id: '1042', ok: false, message: 'NOT DONE: no refund was made. Delivered 45 days ago. Full refunds are only avai",
+   "kind": "test",
+   "in_source": false,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "test/tools.test.js",
+   "line": 47,
+   "text": "test('§2: refund inside 30 days succeeds and is recorded; a second refund is refused', () => {",
+   "kind": "test",
+   "in_source": false,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§2",
+   "value": 30,
+   "unit": "days",
+   "file": "test/tools.test.js",
+   "line": 60,
+   "text": "test('§2: refund after 30 days is refused', () => {",
+   "kind": "test",
+   "in_source": false,
+   "match": "literal"
+  }
+ ],
+ "other_sites": [
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/assistant.js",
+   "line": 109,
+   "text": "- §4: Goodwill store credit is at most $25 per order, once per order, and is never turned into cash or a card refund. Offer it when a refund isn't possible. Iss",
+   "kind": "prompt",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/assistant.js",
+   "line": 110,
+   "text": "- §5: If the customer says an item arrived damaged and the order total is over $200, call escalate_to_human with a short summary. Do not refund it. Damage on or",
+   "kind": "prompt",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/db.js",
+   "line": 42,
+   "text": "amount_cents INTEGER NOT NULL CHECK (amount_cents > 0 AND amount_cents <= 2500),",
+   "kind": "db-check",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/policy.js",
+   "line": 12,
+   "text": "maxCreditCents: 2500, // §4",
+   "kind": "constant",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/policy.js",
+   "line": 13,
+   "text": "damageEscalationOverCents: 20000, // §5: \"over $200\"",
+   "kind": "constant",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/policy.js",
+   "line": 46,
+   "text": "reason: `Delivered ${days} days ago, within the ${RULES.refundWindowDays}-day window (§2): a full refund of ${formatCents(order.total_cents)} is allowed, unless",
+   "kind": "refusal",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/policy.js",
+   "line": 69,
+   "text": "? `Total is over $200: a damage claim on this order must be escalated with escalate_to_human. It must not be refunded directly (§5).`",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/policy.js",
+   "line": 70,
+   "text": ": `Total is $200 or less: a damage claim on this order follows the normal refund rules (§2, §3).`;",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 50,
+   "text": "'Refund an order to the original payment method. Only allowed within 30 days of delivery, never for Final Sale items, and never for damage claims on orders over",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 67,
+   "text": "'Issue goodwill store credit for an order: at most $25, and only once per order. Store credit is never converted to cash or refunded to a card. Returns ok=true ",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 72,
+   "text": "amount: { type: 'number', description: 'Credit amount in US dollars (maximum 25).' },",
+   "kind": "tool-schema",
+   "in_source": true,
+   "match": "contextual"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 84,
+   "text": "\"Hand an order's case to a human support agent. Required for damage claims on orders over $200. Returns ok=true only if the escalation was actually recorded.\",",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§5",
+   "value": 200,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 199,
+   "text": "`The customer reported damage on order ${order.id}, and its total (${formatCents(order.total_cents)}) is over $200. Policy §5: support must not refund it direct",
+   "kind": "code",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 228,
+   "text": "return refused(tool, order, 'INVALID_AMOUNT', 'The amount must be a positive dollar amount, at most $25.00.');",
+   "kind": "refusal",
+   "in_source": true,
+   "match": "literal"
+  },
+  {
+   "clause_id": "§4",
+   "value": 25,
+   "unit": "usd",
+   "file": "src/tools.js",
+   "line": 231,
+   "text": "return refused(tool, order, 'AMOUNT_OVER_LIMIT', `${formatCents(cents)} is over the $25.00 per-order limit for goodwill store credit (§4). You may issue up to $",
+   "kind": "refusal",
+   "in_source": true,
+   "match": "literal"
+  }
+ ],
+ "npm_test": {
+  "pass": 32,
+  "fail": 0
+ },
+ "sha256": "daf3c6d18f583f588dac85eca2388ff747418bb20897d39ef0be0afb1e5d20e3"
+}

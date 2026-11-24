@@ -1,2 +1,7 @@
 build-stderr.log
 build-transcript.jsonl
+# kane-cli context store: shared through a location, never merged with git
+.context/
+evidence/loop/*/attempt-*.jsonl
+evidence/loop/*/attempt-*.jsonl.stderr
+!evidence/loop/*/attempt-*.transcript.jsonl

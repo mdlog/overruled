@@ -1,0 +1,11 @@
+overruled: policy.md changed in fcbbf44. Shopping as the customer...
+overruled: §2 Refund window: 30 days → 60 days (loosen)
+overruled: red: recorded Kane run evidence/kane/e2-run.ndjson (no credits spent)
+overruled: Kane: failed (assertion_error.confirmed_product_bug) — Order 1042 was denied a full refund even though it was delivered 45 days ago and the support policy says full refunds are available for 60 days.
+overruled: 4 source lines restate the old number; npm test 32 pass / 0 fail
+overruled: packet evidence/loop/2026-11-24T0720Z-fcbbf44/packet.md → Claude Code
+overruled: attempt 1: Claude Code is fixing…
+overruled: attempt 1: npm test 62/62, residual 0, probe 4/4 ok
+overruled: fixed in 1 attempt(s); case evidence/loop/2026-11-24T0720Z-fcbbf44
+[main fcbbf44] Ops: holiday returns, refund window 60 days
+ 1 file changed, 8 insertions(+), 2 deletions(-)

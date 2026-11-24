@@ -1,0 +1,37 @@
+[
+ {
+  "n": 1,
+  "files_changed": [
+   "arget/README.md",
+   "target/policy.md",
+   "target/src/app.js",
+   "target/src/assistant.js",
+   "target/src/claims.js",
+   "target/src/db.js",
+   "target/src/policy.js",
+   "target/src/tools.js",
+   "target/src/util.js",
+   "target/src/views.js",
+   "target/test/app.test.js",
+   "target/test/claims.test.js",
+   "target/test/tools.test.js",
+   "target/src/policy-file.js",
+   "target/test/db.test.js",
+   "target/test/policy-fixture.js",
+   "target/test/policy.test.js"
+  ],
+  "agent_summary": "The store now reads every policy number from the new `policy-values` block in `policy.md` through `src/policy-file.js`, and refuses all refunds, credits and escalations with `POLICY_UNAVAILABLE` if that block is missing, unreadable or disagrees with the prose.\nThe prompt, tool descriptions, refusals and `/orders` copy are built from those values; a migration removes the old store-credit cap from existing database files; and the tests take their numbers from `policy.md`.\n\n- **Checks:** `npm test` passes, 62 of 62, in under half a second. `node ../cli/bin/overruled.mjs sites policy.md . --residu",
+  "npm_test": {
+   "pass": 62,
+   "fail": 0
+  },
+  "sites_residual": 0,
+  "probe": {
+   "runs": 4,
+   "bad": 0,
+   "skipped": false
+  },
+  "commit": "5652674",
+  "next": "kane"
+ }
+]

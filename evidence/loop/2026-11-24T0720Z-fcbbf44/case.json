@@ -1,0 +1,84 @@
+{
+ "case": "2026-11-24T0720Z-fcbbf44",
+ "policy_commit": "fcbbf44",
+ "clause_diffs": [
+  {
+   "clause_id": "§2",
+   "title": "Refund window",
+   "unit": "days",
+   "from": 30,
+   "to": 60,
+   "direction": "loosen"
+  }
+ ],
+ "kane": {
+  "status": "failed",
+  "reason_code": "assertion_error.confirmed_product_bug",
+  "one_liner": "Order 1042 was denied a full refund even though it was delivered 45 days ago and the support policy says full refunds are available for 60 days.",
+  "credits": 87.37644749999998,
+  "values": {
+   "policy_page_window": "A full refund to the original payment method is available within **60 days of delivery** (extended holiday returns).",
+   "orders_page_copy": "4 orders on this account. Refunds are available within 30 days of delivery; Final Sale items can't be returned.",
+   "delivered_1042": "2026-10-10",
+   "bot_window": "The refund window is 60 days from the delivery date. If you'd like to process a refund for an eligible order, let me know the order number!",
+   "bot_reply": "The refund window for order 1042 (Alpine Hiking Boots) has passed, as it was delivered 45 days ago. Full refunds are only available within 30 days of delivery. However, I can issue goodwill store credit of up to $25 for this order. Would you like to proceed with store credit instead?",
+   "order_status": "DELIVERED",
+   "refund_rows": "0"
+  },
+  "source": "run_end.context.variables",
+  "missing": [],
+  "pack": "evidence/kane/e2-pack/b089bcc1-8547-49a5-a4d5-11d73186c7fd.evidence",
+  "recorded": "evidence/kane/e2-run.ndjson"
+ },
+ "verdict": {
+  "result": "fail",
+  "failed_gates": [
+   "no-failed-tests",
+   "all-pass"
+  ],
+  "pack_sha256": "9a6892b07c3d41a928c3e829f360e53306bdbce65aad51144e0e2c2fc75ffb92"
+ },
+ "sites_in_source": 4,
+ "attempts": [
+  {
+   "n": 1,
+   "files_changed": [
+    "arget/README.md",
+    "target/policy.md",
+    "target/src/app.js",
+    "target/src/assistant.js",
+    "target/src/claims.js",
+    "target/src/db.js",
+    "target/src/policy.js",
+    "target/src/tools.js",
+    "target/src/util.js",
+    "target/src/views.js",
+    "target/test/app.test.js",
+    "target/test/claims.test.js",
+    "target/test/tools.test.js",
+    "target/src/policy-file.js",
+    "target/test/db.test.js",
+    "target/test/policy-fixture.js",
+    "target/test/policy.test.js"
+   ],
+   "agent_summary": "The store now reads every policy number from the new `policy-values` block in `policy.md` through `src/policy-file.js`, and refuses all refunds, credits and escalations with `POLICY_UNAVAILABLE` if that block is missing, unreadable or disagrees with the prose.\nThe prompt, tool descriptions, refusals and `/orders` copy are built from those values; a migration removes the old store-credit cap from existing database files; and the tests take their numbers from `policy.md`.\n\n- **Checks:** `npm test` passes, 62 of 62, in under half a second. `node ../cli/bin/overruled.mjs sites policy.md . --residu",
+   "npm_test": {
+    "pass": 62,
+    "fail": 0
+   },
+   "sites_residual": 0,
+   "probe": {
+    "runs": 4,
+    "bad": 0,
+    "skipped": false
+   },
+   "commit": "5652674",
+   "next": "kane"
+  }
+ ],
+ "fixed": true,
+ "green": {
+  "status": "not-run",
+  "note": "reduced plan: Kane green not run (credits). The probe check above is the labelled stand-in."
+ }
+}
