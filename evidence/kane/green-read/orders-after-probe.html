@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your orders · Trailhead Supply</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M3 41 L18 15 L25 27 L31 18 L45 41 Z' fill='%231d3326'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/styles.css">
+<script src="/static/chat.js" defer></script>
+</head>
+<body>
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href="/"><svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <path d="M3 41 L18 15 L25 27 L31 18 L45 41 Z" fill="currentColor"/>
+  <path d="M18 15 L22.5 22.8 L19.6 21.4 L16.6 23.8 Z" fill="#f3ead8"/>
+  <rect x="29" y="4" width="5" height="9" rx="1" fill="#e2622b"/>
+</svg><span class="brand-name">Trailhead<em>Supply</em></span></a>
+    <nav class="site-nav" aria-label="Account">
+      <a href="/orders" class="is-active" aria-current="page">Orders</a>
+      <a href="/account/ledger" class="" >Ledger</a>
+    </nav>
+    <div class="account-chip">
+      <span class="account-chip__label">Signed in as</span>
+      <strong id="signed-in-customer" data-customer-id="cust-ana">Ana Lima</strong>
+      <a class="account-chip__out" href="/logout">Sign out</a>
+    </div>
+  </div>
+</header>
+<div class="shell">
+  <main id="main" class="main">
+<section class="page-head">
+  <p class="eyebrow">Account · Ana Lima</p>
+  <h1>Your orders</h1>
+  <p class="lede">4 orders on this account. Refunds are available within 60 days of delivery; Final Sale items can&#39;t be returned.</p>
+</section>
+<div class="card table-wrap">
+  <table class="data-table" id="orders-table">
+    <thead>
+      <tr><th scope="col">Order</th><th scope="col">Item</th><th scope="col" class="num">Total</th><th scope="col">Delivered</th><th scope="col" class="num">Days since delivery</th><th scope="col">Status</th><th scope="col">Final Sale</th></tr>
+    </thead>
+    <tbody>
+      <tr data-order-id="1045" style="--i:0">
+      <td class="mono" data-label="Order"><span class="order-id">#1045</span></td>
+      <td data-label="Item">4-Person Expedition Tent</td>
+      <td class="num mono" data-label="Total">$340.00</td>
+      <td class="mono" data-label="Delivered"><time datetime="2026-11-21">2026-11-21</time></td>
+      <td class="num mono" data-label="Days since delivery" data-days-since-delivery="3">3</td>
+      <td data-label="Status"><span class="stamp stamp--delivered" data-status="DELIVERED">DELIVERED</span></td>
+      <td data-label="Final Sale" data-final-sale="false"><span class="muted">No</span></td>
+    </tr><tr data-order-id="1044" style="--i:1">
+      <td class="mono" data-label="Order"><span class="order-id">#1044</span></td>
+      <td data-label="Item">Clearance Down Jacket</td>
+      <td class="num mono" data-label="Total">$90.00</td>
+      <td class="mono" data-label="Delivered"><time datetime="2026-11-19">2026-11-19</time></td>
+      <td class="num mono" data-label="Days since delivery" data-days-since-delivery="5">5</td>
+      <td data-label="Status"><span class="stamp stamp--delivered" data-status="DELIVERED">DELIVERED</span></td>
+      <td data-label="Final Sale" data-final-sale="true"><span class="tag tag--final">Final Sale</span></td>
+    </tr><tr data-order-id="1043" style="--i:2">
+      <td class="mono" data-label="Order"><span class="order-id">#1043</span></td>
+      <td data-label="Item">Trail Running Vest</td>
+      <td class="num mono" data-label="Total">$68.00</td>
+      <td class="mono" data-label="Delivered"><time datetime="2026-11-14">2026-11-14</time></td>
+      <td class="num mono" data-label="Days since delivery" data-days-since-delivery="10">10</td>
+      <td data-label="Status"><span class="stamp stamp--delivered" data-status="DELIVERED">DELIVERED</span></td>
+      <td data-label="Final Sale" data-final-sale="false"><span class="muted">No</span></td>
+    </tr><tr data-order-id="1042" style="--i:3">
+      <td class="mono" data-label="Order"><span class="order-id">#1042</span></td>
+      <td data-label="Item">Alpine Hiking Boots</td>
+      <td class="num mono" data-label="Total">$129.00</td>
+      <td class="mono" data-label="Delivered"><time datetime="2026-10-10">2026-10-10</time></td>
+      <td class="num mono" data-label="Days since delivery" data-days-since-delivery="45">45</td>
+      <td data-label="Status"><span class="stamp stamp--refunded" data-status="REFUNDED">REFUNDED</span></td>
+      <td data-label="Final Sale" data-final-sale="false"><span class="muted">No</span></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+  </main>
+  <aside id="support-chat" class="chat" data-signed-in="true" aria-label="Customer support chat">
+  <div class="chat__head">
+    <div>
+      <p class="chat__eyebrow">Trail desk</p>
+      <h2 class="chat__title">Support chat</h2>
+    </div>
+    <button type="button" class="chat__toggle" id="chat-toggle" aria-expanded="true" aria-controls="chat-body" title="Minimise chat">
+      <span aria-hidden="true">–</span><span class="visually-hidden">Toggle chat</span>
+    </button>
+  </div>
+  <div class="chat__body" id="chat-body">
+    <div class="chat__messages" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions">
+      <div class="chat-intro">
+        <p>Hi Ana! I'm the Trailhead Supply support assistant. Ask me about your orders, returns, refunds or a damaged delivery.</p>
+      </div>
+    </div>
+    <form class="chat__form" id="chat-form" autocomplete="off">
+      <label class="visually-hidden" for="chat-input">Message support</label>
+      <textarea id="chat-input" name="message" rows="2" placeholder="Type your message…" ></textarea>
+      <button type="submit" id="chat-send" class="chat__send" >Send</button>
+    </form>
+    <p class="chat__fineprint">Replies follow our <a href="/policy">support policy</a>. Actions are logged to your account.</p>
+  </div>
+</aside>
+</div>
+<footer class="site-footer"><p>Trailhead Supply · Outdoor gear since the first switchback · Dev build: accounts via <code>/login-as/:customerId</code></p></footer>
+</body>
+</html>

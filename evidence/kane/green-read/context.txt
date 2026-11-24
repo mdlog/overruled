@@ -1,0 +1,7 @@
+date: 2026-11-24T08:03:19Z
+HEAD: 71aedf4
+fix commit: 5652674
+code diff since fix (target/src, target/public): 0 lines
+policy.md §2: within **60 days
+kane-cli: 0.10.8
+model: qwen3:8b T0 seed 1 (500a1f067a9f)

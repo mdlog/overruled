@@ -1,0 +1,28 @@
+{
+  "session_id": "345bdb92-2619-4ccc-a4ce-6912efc24517",
+  "started_at": "2026-11-24T08:03:46.073Z",
+  "ended_at": "2026-11-24T08:04:07.495Z",
+  "model": "v16-alpha",
+  "environment": "prod",
+  "profile": "mdlog",
+  "plan": "free",
+  "status": "complete",
+  "outcome": "passed",
+  "total_runs": 1,
+  "test_id": null,
+  "testcase_id": null,
+  "commit_id": "345bdb92-2619-4ccc-a4ce-6912efc24517",
+  "project_id": null,
+  "upload_status": "pending",
+  "upload_attempts": 0,
+  "last_upload_attempt": null,
+  "upload_error": null,
+  "runs": [
+    {
+      "index": 0,
+      "objective": "Order 1042 has status REFUNDED.\nThe text near the top of the page says refunds are available within 60 days of delivery.\nThe text near the top of the page says refunds are available within 30 days of delivery.",
+      "status": "passed"
+    }
+  ],
+  "credits_consumed": 5.1231100000000005
+}
