@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { saidClaims, judge } from './judge.mjs';
 const defs = {};
-for (const f of ['scenarios.json', 'variants.json'])
+for (const f of ['scenarios.json', 'variants.json', 'drift.json'])
   for (const sc of JSON.parse(readFileSync(new URL(f, import.meta.url), 'utf8')).scenarios) defs[sc.id] = sc;
 const agg = {};
 for (const file of process.argv.slice(2)) {
