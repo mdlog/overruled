@@ -43,7 +43,8 @@ Ops commits policy.md
        ├─ claude -p in target/ (restricted tools, non-interactive)
        ├─ free checks: npm test · probe conversations · sites --residual = 0
        │    └─ failed? re-prompt with what failed (up to 3 attempts)
-       └─ all green → commit the fix → Kane again
+       └─ all green → commit the fix → Kane again: the customer talks to the bot,
+            then Kane judges /orders (--analyzer-only, with a negative control)
 ```
 
 Config: `overruled.config.json` (Kane objective, the keys Kane stores, the fix contract). Hook: `git config core.hooksPath .githooks`.
@@ -86,7 +87,7 @@ git config core.hooksPath .githooks       # arm the hook
 # edit a number in target/policy.md and commit: the hook runs overruled check
 ```
 
-`overruled check` compares `policy.md` with `HEAD~1` (`--from <rev>` to change that). `--recorded <run.ndjson>` uses a recorded Kane run as the red instead of a live one, `--packet-only` stops before Claude Code, and `--max-attempts` caps the re-prompts. The hook's own output for case 1 is `evidence/loop-run-1.log`.
+`overruled check` compares `policy.md` with `HEAD~1` (`--from <rev>` to change that). `--recorded <run.ndjson>` uses a recorded Kane run as the red instead of a live one, `--packet-only` stops before Claude Code, and `--max-attempts` caps the re-prompts, and `--kane-green` runs the green after a fix. `check --green-only <case dir>` runs only the green for a case that is already fixed: the conversation from `kane.green.setup`, then Kane judges each condition in `kane.green.conditions` (`{to}`/`{from}` are the new and old values, so the old number works as a negative control). If the conversation itself breaks the rule, no credits are spent. The hook's own output for case 1 is `evidence/loop-run-1.log`.
 
 ## Known limits
 - **`sites` is a regex lint on numbers and units.** It once flagged a regex quantifier (`{0,60}` next to the word "refund"). In case 1, Claude Code hoisted that quantifier into a constant to clear the residual check (`target/src/claims.js:20`, behaviour unchanged). Fixed in `sites` afterwards (`77a0652`, with a test).

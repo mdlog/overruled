@@ -34,6 +34,11 @@ function fmt(v, u) {
   return u === 'usd' ? `$${v}` : u === 'days' ? `${v} days` : `${v}%`;
 }
 
+if (cmd === 'check' && opt('--green-only')) {
+  const { greenOnly } = await import('../src/check.mjs');
+  const r = await greenOnly({ config: opt('--config'), greenOnly: opt('--green-only'), recordedGreen: opt('--recorded-green') });
+  process.exit(r.status === 'passed' ? 0 : 1);
+}
 if (cmd === 'check') {
   const { check } = await import('../src/check.mjs');
   const r = await check({

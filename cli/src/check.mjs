@@ -59,6 +59,80 @@ function kaneRun(cfg, root, objective, outBase) {
   const pack = (readFileSync(`${outBase}.stderr`, 'utf8').match(/evidence serve (\S+\.evidence)/) || [])[1] || null;
   return { exit: r.code, runEnd: readRunEnd(`${outBase}.ndjson`), pack, balance: { before, after } };
 }
+// Green as a read: the conversation runs first (cfg.kane.green.setup, labelled), then Kane judges
+// the customer-visible page with --analyzer-only: no agent steps, one verdict per condition.
+// Each condition carries the value it should judge, so a negative control (the old number) counts.
+async function kaneGreenRead(cfg, root, clause, outDir, { recorded } = {}) {
+  const g = cfg.kane.green;
+  const fill = (s) => s.replace(/\{to\}/g, clause.to).replace(/\{from\}/g, clause.from);
+  const conds = (g.conditions[clause.clause_id] || []).map((c) => ({ text: fill(c.text), expected: c.expect }));
+  if (!conds.length) return { status: 'not-run', note: `no green conditions for ${clause.clause_id} in overruled.config.json` };
+  mkdirSync(outDir, { recursive: true });
+  sh(cfg.app.reset, { cwd: join(root, cfg.app.dir) });
+  await startApp(cfg, root);
+  const setup = sh(g.setup, { cwd: root, env: { RESET_CMD: cfg.app.reset_cmd_from_root, OUT_DIR: outDir }, timeout: 600_000 });
+  writeFileSync(join(outDir, 'setup.log'), setup.out);
+  if (setup.code !== 0 || /BREACH|OVER-REFUSAL|ERROR/.test(setup.out)) {
+    stopApp(cfg);
+    return { status: 'not-run', note: 'the setup conversation did not end as the new rule says, so no Kane credits were spent', setup: relative(root, join(outDir, 'setup.log')) };
+  }
+  let runEnd, balance = null, sessionId = null;
+  const base = join(outDir, 'run');
+  if (recorded) {
+    runEnd = readRunEnd(resolve(recorded));
+    log(`green: recorded Kane read ${relative(root, resolve(recorded))} (no credits spent)`);
+  } else {
+    const flags = conds.map((c) => `--condition ${JSON.stringify(c.text)}`).join(' ');
+    const before = sh('kane-cli balance 2>/dev/null | tail -1').out.trim();
+    sh(`kane-cli run --analyzer-only --agent --headless --url ${g.url} ${flags} --timeout ${g.timeout || 300} < /dev/null > ${base}.ndjson 2> ${base}.stderr`, { cwd: root, timeout: ((g.timeout || 300) + 60) * 1000 });
+    const after = sh('kane-cli balance 2>/dev/null | tail -1').out.trim();
+    balance = { before, after };
+    runEnd = readRunEnd(`${base}.ndjson`);
+    try { sessionId = readFileSync(`${base}.ndjson`, 'utf8').split('\n').map((l) => { try { return JSON.parse(l); } catch { return {}; } }).find((e) => e.type === 'recording_state')?.session_id || null; } catch { /* none */ }
+  }
+  stopApp(cfg);
+  if (!runEnd || !Array.isArray(runEnd.condition_results)) return { status: 'error', note: 'Kane returned no condition results', recorded: relative(root, `${base}.ndjson`) };
+  const conditions = conds.map((c, i) => ({ ...c, result: runEnd.condition_results[i], extracted: runEnd.condition_sub_checks?.[i]?.extracted_value ?? null }));
+  const passed = conditions.every((c) => c.result === c.expected);
+  return {
+    status: passed ? 'passed' : 'failed',
+    kind: 'analyzer-only',
+    kane_status: runEnd.status,
+    one_liner: passed ? `Every condition judged as expected (${conditions.length}, including ${conditions.filter((c) => !c.expected).length} negative control).` : `Not as expected: ${conditions.filter((c) => c.result !== c.expected).map((c) => c.text).join(' | ')}`,
+    conditions,
+    credits: runEnd.credits_consumed != null ? Math.round(runEnd.credits_consumed * 100) / 100 : null,
+    duration_s: runEnd.duration,
+    session_id: sessionId,
+    conversation: g.setup_label,
+    recorded: relative(root, recorded ? resolve(recorded) : `${base}.ndjson`),
+    replayed_record: !!recorded,
+    balance,
+    at: runEnd.ts,
+  };
+}
+
+// overruled check --green-only <caseDir>: run the green again for a case that is already fixed.
+export async function greenOnly(opts) {
+  const configPath = resolve(opts.config || 'overruled.config.json');
+  const cfg = JSON.parse(readFileSync(configPath, 'utf8'));
+  const root = dirname(configPath);
+  const caseDir = resolve(opts.greenOnly);
+  const casePath = join(caseDir, 'case.json');
+  const c = JSON.parse(readFileSync(casePath, 'utf8'));
+  if (!c.fixed) { log('this case is not fixed; nothing to check green.'); return { status: 'not-fixed' }; }
+  const clause = c.clause_diffs[0];
+  const stamp = new Date().toISOString().replace(/[:.]/g, '').slice(0, 15);
+  log(`green: ${clause.clause_id} ${clause.title} is now ${fmt(clause.to, clause.unit)}. The customer talks to the bot, then Kane reads the page…`);
+  const green = await kaneGreenRead(cfg, root, clause, join(caseDir, `kane-green-${stamp}Z`), { recorded: opts.recordedGreen });
+  for (const k of green.conditions || []) log(`  ${k.result === k.expected ? 'ok ' : 'BAD'} ${k.text} → ${k.result}${k.expected ? '' : ' (negative control)'}`);
+  log(`green: ${green.status}${green.credits != null ? ` · ${green.credits} credits${green.replayed_record ? ' when it was recorded' : ''}` : ''}${green.note ? ` · ${green.note}` : ''}`);
+  if (c.green && c.green.status !== 'not-run') c.green_history = [...(c.green_history || []), c.green];
+  c.green = green;
+  writeFileSync(casePath, `${JSON.stringify(c, null, 1)}\n`);
+  log(`case ${relative(root, casePath)} updated; re-render the page with: overruled case ${relative(root, caseDir)}`);
+  return green;
+}
+
 function verdict(cfg, root, pack) {
   if (!pack) return null;
   const r = sh(`kane-cli evidence verdict ${JSON.stringify(pack)} --policy ${JSON.stringify(join(root, cfg.kane.gate))} --json 2>/dev/null`, { cwd: dirname(pack) });
@@ -246,7 +320,11 @@ export async function check(opts) {
 
   // green
   let green = null;
-  if (fixed && opts.kaneGreen) {
+  if (fixed && opts.kaneGreen && cfg.kane.green?.mode === 'analyzer-only') {
+    log('green: the customer talks to the bot again, then Kane reads the page…');
+    green = await kaneGreenRead(cfg, root, clause, join(out, 'kane-green'));
+    log(`green: ${green.status}${green.credits != null ? ` · ${green.credits} credits` : ''}${green.note ? ` · ${green.note}` : ''}`);
+  } else if (fixed && opts.kaneGreen) {
     log('green: Kane shops again…');
     sh(cfg.app.reset, { cwd: appDir });
     await startApp(cfg, root);

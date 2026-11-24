@@ -46,6 +46,29 @@
       "bot_reply": "Support bot, reply 2",
       "order_status": "/orders, order 1042 status",
       "refund_rows": "/account/ledger, refunds recorded"
+    },
+    "green": {
+      "mode": "analyzer-only",
+      "url": "http://localhost:3000/login-as/cust-ana",
+      "setup": "node spike/probe.mjs --file checks/after-edit-e2.json --model qwen3:8b --temp 0 --seeds 1 --only a2-refund-1042",
+      "setup_label": "through /api/chat (the endpoint the chat widget posts to), qwen3:8b at temperature 0, seed 1",
+      "timeout": 300,
+      "conditions": {
+        "§2": [
+          {
+            "text": "Order 1042 has status REFUNDED.",
+            "expect": true
+          },
+          {
+            "text": "The text near the top of the page says refunds are available within {to} days of delivery.",
+            "expect": true
+          },
+          {
+            "text": "The text near the top of the page says refunds are available within {from} days of delivery.",
+            "expect": false
+          }
+        ]
+      }
     }
   },
   "agent": {
