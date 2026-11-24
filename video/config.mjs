@@ -31,8 +31,9 @@ export const STEP6 = 'tests/you-are-ana-a-signed-in-customer-of-trai-e3f73219/st
  * lines with their times, the run.ndjson Kane wrote (or the committed record), the three results and the label.
  *   recorded (default, 0 credits): node video/capture-green.mjs          -> out/captures/green-recorded.json
  *   live take (about 5 credits):    node video/capture-green.mjs --live   -> out/captures/green-live.json
- * Point GREEN_TAKE at the one to film. Unset, the beat films the recorded one; a live take is only filmed when asked
- * for, and select.mjs refuses one whose conditions did not come out as expected (VIDEO_SCRIPT: never retry, fall back).
+ * Point GREEN_TAKE at the one to film. Unset, the beat films the live take when its capture exists (the take was
+ * filmed on 2026-11-24 09:51 UTC and committed in c01e42b), else the recorded one. select.mjs refuses a take whose
+ * conditions did not come out as expected (VIDEO_SCRIPT: never retry, fall back).
  */
-export const GREEN_TAKE = process.env.GREEN_TAKE ?? `${CAP}green-recorded.json`;
+export const GREEN_TAKE = process.env.GREEN_TAKE ?? (existsSync(`${CAP}green-live.json`) ? `${CAP}green-live.json` : `${CAP}green-recorded.json`);
 export const greenTakeExists = () => existsSync(GREEN_TAKE);
