@@ -5,3 +5,9 @@ build-transcript.jsonl
 evidence/loop/*/attempt-*.jsonl
 evidence/loop/*/attempt-*.jsonl.stderr
 !evidence/loop/*/attempt-*.transcript.jsonl
+
+# demo video pipeline: build output and local installs
+video/out/
+video/node_modules/
+video/.venv/
+video/__pycache__/
