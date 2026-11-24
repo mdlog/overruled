@@ -1,0 +1,11 @@
+# Use-case text in the Kane context store after ingest (v1.0) and the resumed re-extract (v1.1).
+# Source: kane-cli context view (context-view-after-v1.1.html). Lines quoting the window or the credit cap:
+
+- A human support agent or AI support assistant resolves a signed-in customer's eligible refund request by issuing a full refund to the original payment method within 30 days of delivery, refusing refunds after that window or for Final Sale items, and applying the ordinary refund rule to damage claims on orders of $200 or less while escalating higher-value damage claims rather than refunding directl
+- Within 30 days of delivery, an eligible refund is full and goes to the original payment method; after 30 days, no refund is issued and store credit may be offered instead.
+- A human support agent or AI support assistant may offer a signed-in customer store credit instead of an unavailable refund after 30 days and issue goodwill credit of no more than $25 once per order, without converting it to cash or refunding it to a card, while accurately communicating whether issuance succeeded.
+- Goodwill store credit is capped at $25 per order and may be issued only once per order.
+- A human support agent or AI support assistant resolves a signed-in customer's eligible refund request by issuing a full refund to the original payment method within 7 days of delivery, refusing refunds after 7 days or for Final Sale items, applying the refund-window rule to damaged-item claims on orders of $200 or less, and escalating damaged-item claims over $200 instead of refunding directly; su
+- Within 7 days of delivery, an eligible refund is full and goes to the original payment method; after 7 days, no refund is issued and store credit may be offered instead.
+- A human support agent or AI support assistant may offer a signed-in customer store credit instead of an unavailable refund after 7 days and issue goodwill credit of no more than $15 once per order, without converting it to cash or refunding it to a card, while accurately communicating whether issuance succeeded and plainly stating failures or disallowed actions.
+- Goodwill store credit is capped at $15 per order and may be issued only once per order.

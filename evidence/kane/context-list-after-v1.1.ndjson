@@ -1,0 +1,9 @@
+{"id":"policy","cid":"sha256:15623ee89a18f488d5adef9e616e7fd007ee1f542f1115578da7b9b601b6c7fb","label":"source","title":"policy","trust":"-","fresh":"fresh"}
+{"id":"uc-1","cid":"sha256:c0d2287898450020fc33c3351f47eef1595c7585070415d79ca54ccd9078028e","label":"usecase","title":"Access a customer's order for support","trust":"derived","fresh":"stale"}
+{"id":"uc-5","cid":"sha256:41d65d6e980c15f479251a44cb6cf5dc9083e1efe80b6ce8c0c28cc155103db4","label":"usecase","title":"Access a customer's order for support","trust":"derived","fresh":"fresh"}
+{"id":"uc-4","cid":"sha256:311d52d64ce2921aaada19fd8847057c7b6d71b34761db7525f746ded772709e","label":"usecase","title":"Escalate a high-value damage claim to a human agent","trust":"derived","fresh":"stale"}
+{"id":"uc-8","cid":"sha256:d55b87619274c15c71c495bdf0bf2cf238c67f6e8cca6e76cdc28bb8fbd8ea6b","label":"usecase","title":"Escalate a high-value damage claim to a human agent","trust":"derived","fresh":"fresh"}
+{"id":"uc-3","cid":"sha256:218618d860683582e390ab1d9c421c5273e4e087ded7bc71ed6849b7e07bbb5d","label":"usecase","title":"Issue goodwill store credit for an order","trust":"derived","fresh":"stale"}
+{"id":"uc-7","cid":"sha256:e8265f6b3258ff1abda83fffa83468bf3bbd1c958f7eed18e2fa93111ed5a34e","label":"usecase","title":"Issue goodwill store credit for an order","trust":"derived","fresh":"fresh"}
+{"id":"uc-2","cid":"sha256:00d5ba47a7c3e13f06ccc05867f7c61047d94aded90c32805028aaee735549a2","label":"usecase","title":"Refund an eligible order","trust":"derived","fresh":"stale"}
+{"id":"uc-6","cid":"sha256:65b10b76330b8d4e61cb038fde7cc772d73bd5c03820261f9504c990929747b9","label":"usecase","title":"Refund an eligible order","trust":"derived","fresh":"fresh"}

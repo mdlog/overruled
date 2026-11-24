@@ -55,7 +55,7 @@ Set, hypotheses and the proceed/stop rule were committed with hash `d3d04bf6…`
 
 **Decision rule → PROCEED.** At least one edit breaches on both models at ≥3/5 (e2, e6), and the c0 control is green on both models.
 
-**Caveat to carry into the pitch:** both cells that pass on both models are *loosen* edits that the code enforces deterministically (as hypothesised). The customer is denied what the edited policy grants, and no money moves wrongly. The model-mediated money-moving breaches (e1, e3, e5, e7) are strong on qwen3:8b and weak or absent on gpt-oss:20b. Which copy of the policy each model obeys:
+**Caveat to carry into the pitch:** both cells that pass on both models are *loosen* edits that the code enforces deterministically (as hypothesised). The customer is denied what the edited policy grants, and no money moves wrongly. The model-mediated money-moving breaches (e1, e3, e7) are strong on qwen3:8b and weak or absent on gpt-oss:20b. e5 is a missing escalation, not money moving. Which copy of the policy each model obeys:
 - gpt-oss:20b follows `policy.md` whenever the tools allow it, but cannot override a tool refusal.
 - qwen3:8b follows the tool output.
 
@@ -63,7 +63,7 @@ Set, hypotheses and the proceed/stop rule were committed with hash `d3d04bf6…`
 - Correct: e2, e3, e4, e6, c0, and e7 for qwen.
 - Wrong: e1 and e5 for gpt-oss (predicted ≥3/5, measured 0/5 and 2/5).
 
-**Classifier note:** gpt-oss writes "30 days" with U+202F (narrow no-break space) and U+2011 hyphens, so the pre-registered `stale` regexes missed them. `judge.mjs` now normalises these characters. A post-hoc rescore moves only the said-stale column (e2 gpt-oss 0→4/5); effect breaches are unaffected.
+**Classifier note:** gpt-oss writes "30 days" with U+202F (narrow no-break space) and U+2011 hyphens, so the pre-registered `stale` regexes missed them. `judge.mjs` now normalises these characters. A post-hoc rescore moves only the said-stale column (e2 gpt-oss 0→4/5); effect breaches are unaffected. The committed rows keep the pre-registered counts; `spike/rescore-stale.mjs` → `results/drift-set-stale-rescore.json` reports both.
 
 **Same build, same day, policy v1.1 in force:** `npm test` passes 32/32 (`evidence/npm-test-under-v1.1.txt`). `spike/sites.mjs` finds each policy number restated across the source:
 - the window in 5 places, including the copy on the customer's /orders page;

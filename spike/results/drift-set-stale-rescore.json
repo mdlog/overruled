@@ -1,0 +1,65 @@
+{
+ "note": "said-stale counts per cell; preregistered_regex = as committed in b84cee1; after_normalisation = U+202F/U+00A0/U+2009/U+2007 -> space, U+2010..U+2013 -> hyphen. Every hit still needs a human read.",
+ "cells": {
+  "e1-window14-1043 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 0,
+   "after_normalisation": 0
+  },
+  "e2-window60-1042 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 0,
+   "after_normalisation": 4
+  },
+  "e3-credit10-1043 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 0,
+   "after_normalisation": 0
+  },
+  "e4-credit50-1043 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 5,
+   "after_normalisation": 5
+  },
+  "e5-damage100-1042 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 0,
+   "after_normalisation": 0
+  },
+  "e6-damage500-1045 | gpt-oss:20b": {
+   "runs": 5,
+   "preregistered_regex": 2,
+   "after_normalisation": 2
+  },
+  "e1-window14-1043 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 0,
+   "after_normalisation": 0
+  },
+  "e2-window60-1042 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 5,
+   "after_normalisation": 5
+  },
+  "e3-credit10-1043 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 5,
+   "after_normalisation": 5
+  },
+  "e4-credit50-1043 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 5,
+   "after_normalisation": 5
+  },
+  "e5-damage100-1042 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 1,
+   "after_normalisation": 1
+  },
+  "e6-damage500-1045 | qwen3:8b": {
+   "runs": 5,
+   "preregistered_regex": 2,
+   "after_normalisation": 2
+  }
+ }
+}
