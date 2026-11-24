@@ -24,6 +24,7 @@ const RULES = {
 export function sentences(text) {
   return String(text)
     .replace(/[’‘]/g, "'").replace(/\*\*/g, '')
+    .replace(/[\u00a0\u202f\u2009\u2007]/g, ' ').replace(/[\u2010-\u2013]/g, '-')
     .split(/(?<=[.!?])(?<!\$\d+\.)\s+(?=[A-Z0-9"(])|\n+/)
     .map(s => s.trim()).filter(Boolean);
 }
