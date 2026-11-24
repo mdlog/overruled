@@ -39,7 +39,7 @@ export function classify(file, line) {
   if (/refus|reason\s*:|throw\s|error/i.test(t)) return 'refusal';
   if (/^-?\s*§\d/.test(t) || /system ?prompt/i.test(t)) return 'prompt';
   if (/\.(html|ejs|hbs|vue|svelte)$/.test(file) || /<\/?(p|span|div|li|h\d|td)\b|class=/.test(t)) return 'page-copy';
-  if (/^[\w$.]+\s*[:=]\s*-?\d/.test(t) || /\b(const|let|var)\s+\w+\s*=\s*-?\d/.test(t)) return 'constant';
+  if (/^[\w$.]+\s*[:=]\s*-?\d/.test(t) || /\b(const|let|var)\s+\w+\s*=\s*-?\d/.test(t) || /\b[A-Za-z_$][\w$]*\s*:\s*-?\d/.test(t)) return 'constant';
   return 'code';
 }
 
