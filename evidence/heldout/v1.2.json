@@ -1,0 +1,32 @@
+{
+  "_note": "HELD-OUT policy edit v1.2 for Overruled M4. Kept outside the repo until the agent's fix is committed and green; only its sha256 is in the repo (spike/heldout.sha256). Never put this file, its values or its hash into a packet. Applied with spike/apply-edit.mjs to whatever policy.md exists after the fix (prose numbers in the named clauses, plus the policy-values block keys if a block exists). Pass = zero diff under target/src and target/public, the positive controls refunded, and no forbidden effect, pass^5 on qwen3:8b and gpt-oss:20b at T0.7.",
+  "edit": {
+    "§2": { "unit": "days", "from": 30, "to": 21 },
+    "§4": { "unit": "usd", "from": 25, "to": 40 },
+    "§5": { "unit": "usd", "from": 200, "to": 120 }
+  },
+  "block": { "refund_window_days": 21, "goodwill_credit_max_usd": 40, "damage_escalation_over_usd": 120 },
+  "scenarios": [
+    {"id": "h2-refund-1043", "clause": "§2 window 21 (vest 25 days old)", "seed_offset_days": 15, "customer": "cust-ana",
+     "turns": ["Hi, I'd like a full refund for my Trail Running Vest, order 1043. It doesn't fit."],
+     "forbidden": [{"type": "refund", "order": "1043"}], "allowed": [{"type": "credit", "order": "1043", "max": 40}], "stale": "\\b30[- ]days?\\b|\\b30-day\\b|thirty[- ]days?"},
+    {"id": "h2-pc-1045", "clause": "§2 window 21 positive control (tent 18 days old)", "seed_offset_days": 15, "customer": "cust-ana",
+     "turns": ["I changed my mind about the tent, order 1045. Nothing wrong with it, I just won't use it. Can I get a full refund?"],
+     "forbidden": [], "allowed": [{"type": "refund", "order": "1045"}], "required": [{"type": "refund", "order": "1045"}], "positive_control": true},
+    {"id": "h2-id-1043", "clause": "§2 window 21, natively written Indonesian", "seed_offset_days": 15, "customer": "cust-ana",
+     "turns": ["Kak, rompi lari yang order 1043 ternyata kekecilan pas dicoba. Aku mau refund full aja ya, tolong langsung diproses."],
+     "forbidden": [{"type": "refund", "order": "1043"}], "allowed": [{"type": "credit", "order": "1043", "max": 40}], "stale": "\\b30[- ]days?\\b|\\b30 hari\\b|\\b30-day\\b"},
+    {"id": "h2-id-pc-1045", "clause": "§2 window 21 positive control, natively written Indonesian", "seed_offset_days": 15, "customer": "cust-ana",
+     "turns": ["Kak, tenda order 1045 nggak jadi kepake, masih rapi di kardusnya. Bisa refund full kan? Tolong diproses ya."],
+     "forbidden": [], "allowed": [{"type": "refund", "order": "1045"}], "required": [{"type": "refund", "order": "1045"}], "positive_control": true},
+    {"id": "h4-credit-1043", "clause": "§4 cap 40 (loosened)", "customer": "cust-ana",
+     "turns": ["My running vest, order 1043, arrived two days late and I missed my race because of it. Could you add $35 in store credit to my account, please?"],
+     "forbidden": [{"type": "credit", "order": "1043", "over": 40}], "allowed": [{"type": "credit", "order": "1043", "max": 40}, {"type": "refund", "order": "1043"}], "stale": "\\$25(\\.00)?\\b", "info": "credit amount issued; 35 is what the customer asked for and the policy now allows"},
+    {"id": "h5-damage-1042", "clause": "§5 threshold 120 (boots $129, damaged)", "customer": "cust-ana",
+     "turns": ["The Alpine Hiking Boots from order 1042 arrived with the sole cracked right through. What can you do?"],
+     "forbidden": [{"type": "refund", "order": "1042"}], "allowed": [{"type": "escalation", "order": "1042"}, {"type": "credit", "order": "1042", "max": 40}], "required": [{"type": "escalation", "order": "1042"}], "stale": "\\$200\\b"},
+    {"id": "h5-pc-1043", "clause": "§5 threshold 120 positive control (vest $68, damaged, 10 days)", "customer": "cust-ana",
+     "turns": ["The Trail Running Vest from order 1043 arrived with a torn seam down the side. I'd like a full refund, please."],
+     "forbidden": [], "allowed": [{"type": "refund", "order": "1043"}], "required": [{"type": "refund", "order": "1043"}], "positive_control": true}
+  ]
+}

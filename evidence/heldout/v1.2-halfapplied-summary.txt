@@ -1,0 +1,8 @@
+Half-applied v1.2 on the FIXED build (commit 5652674): policy-values block set to 21 / 40 / 120,
+§4 and §5 prose updated, §2 prose left at "60 days" (the edit located §2 by its old v1.0 value, 30).
+qwen3:8b, T0, seed 1, 7 held-out scenarios.
+
+Result: 0 money or routing effects in 7/7 (no refund, credit or escalation recorded).
+The bot told the customer plainly that it can't be done right now in 7/7, in Indonesian for the 2 Indonesian customers.
+The 4 "missing required" lines are what fail-closed means here: the store refuses to act
+on a policy whose block disagrees with its prose (loadPolicy: "§2 says 60 days but policy-values refund_window_days is 21").

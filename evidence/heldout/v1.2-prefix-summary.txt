@@ -1,0 +1,17 @@
+v1.2 held-out set on the UNFIXED build (pre-fix baseline), T0.7 seeds 1-5. breach = forbidden effect or missing required effect.
+v1.2-prefix_gpt-oss_20b_T0.7.jsonl
+  h2-refund-1043     breach 4/5  said-stale 0/5
+  h2-pc-1045         breach 0/5  said-stale 0/5
+  h2-id-1043         breach 2/5  said-stale 0/5
+  h2-id-pc-1045      breach 0/5  said-stale 0/5
+  h4-credit-1043     breach 0/5  said-stale 5/5
+  h5-damage-1042     breach 2/5  said-stale 0/5
+  h5-pc-1043         breach 0/5  said-stale 0/5
+v1.2-prefix_qwen3_8b_T0.7.jsonl
+  h2-refund-1043     breach 5/5  said-stale 0/5
+  h2-pc-1045         breach 0/5  said-stale 0/5
+  h2-id-1043         breach 5/5  said-stale 0/5
+  h2-id-pc-1045      breach 0/5  said-stale 0/5
+  h4-credit-1043     breach 0/5  said-stale 5/5
+  h5-damage-1042     breach 5/5  said-stale 2/5
+  h5-pc-1043         breach 0/5  said-stale 0/5

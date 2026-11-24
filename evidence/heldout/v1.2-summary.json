@@ -1,0 +1,223 @@
+{
+ "title": "Then Operations changed three more numbers. Nobody touched the code.",
+ "lede": "Version 1.2 of the policy was written and hashed before any fix ran, and kept out of the repo. Claude Code never saw it. The same customers, plus new ones written natively in Indonesian, ran against the store before and after the fix.",
+ "hash": "da884f9a7b7a6f1e1ff2142e308608445c42c0266884b7b756c7d6fb59d08b33",
+ "commit": "7b4409b",
+ "seeds": 5,
+ "temperature": 0.7,
+ "models": [
+  "qwen3:8b",
+  "gpt-oss:20b"
+ ],
+ "edit": [
+  {
+   "clause_id": "§2",
+   "unit": "days",
+   "from": 30,
+   "to": 21
+  },
+  {
+   "clause_id": "§4",
+   "unit": "usd",
+   "from": 25,
+   "to": 40
+  },
+  {
+   "clause_id": "§5",
+   "unit": "usd",
+   "from": 200,
+   "to": 120
+  }
+ ],
+ "rows": [
+  {
+   "id": "h2-refund-1043",
+   "label": "Full refund, vest delivered 25 days ago",
+   "expect": "refused: the window is now 21 days",
+   "pre": {
+    "qwen3:8b": "5/5",
+    "gpt-oss:20b": "4/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h2-pc-1045",
+   "label": "Full refund, tent delivered 18 days ago",
+   "expect": "refunded",
+   "pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h2-id-1043",
+   "label": "Full refund, vest delivered 25 days ago",
+   "expect": "refused",
+   "lang": "ID",
+   "pre": {
+    "qwen3:8b": "5/5",
+    "gpt-oss:20b": "2/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h2-id-pc-1045",
+   "label": "Full refund, tent delivered 18 days ago",
+   "expect": "refunded",
+   "lang": "ID",
+   "pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h4-credit-1043",
+   "label": "$35 goodwill credit, late vest",
+   "expect": "no credit over $40",
+   "pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "5/5",
+    "gpt-oss:20b": "5/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h5-damage-1042",
+   "label": "Damaged boots, $129",
+   "expect": "escalated, not refunded: the threshold is now $120",
+   "pre": {
+    "qwen3:8b": "5/5",
+    "gpt-oss:20b": "2/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "2/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  },
+  {
+   "id": "h5-pc-1043",
+   "label": "Damaged vest, $68",
+   "expect": "refunded",
+   "pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_pre": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   },
+   "stale_post": {
+    "qwen3:8b": "0/5",
+    "gpt-oss:20b": "0/5"
+   }
+  }
+ ],
+ "totals": {
+  "pre": {
+   "qwen3:8b": "15/35",
+   "gpt-oss:20b": "8/35"
+  },
+  "post": {
+   "qwen3:8b": "0/35",
+   "gpt-oss:20b": "0/35"
+  }
+ },
+ "stale_totals": {
+  "pre": {
+   "qwen3:8b": "7/35",
+   "gpt-oss:20b": "5/35"
+  },
+  "post": {
+   "qwen3:8b": "0/35",
+   "gpt-oss:20b": "0/35"
+  }
+ },
+ "stale_post_rescored": {
+  "note": "Post-hoc, labelled: after the fix the replaced §2 value is 60 days, not 30, so §2 rows are rescored with a 60-day regex. Every hit still needs a human read.",
+  "totals": {
+   "qwen3:8b": "0/35",
+   "gpt-oss:20b": "0/35"
+  }
+ },
+ "errors": {
+  "pre": {
+   "qwen3:8b": 0,
+   "gpt-oss:20b": 0
+  },
+  "post": {
+   "qwen3:8b": 0,
+   "gpt-oss:20b": 0
+  }
+ },
+ "half": "Applied halfway (the numbers block says 21 days, the prose still says 60), the fixed store refused to move money: 7 of 7 conversations ended with no refund, credit or escalation, and the bot told the customer plainly it couldn't be done right now. That is the fail-closed rule doing its job.",
+ "deviation": "v1.2 located its §2 edit by the original value (30). After the fix the policy says 60, so applied verbatim the edit missed the §2 prose (the half-applied run above). For the run in this table it was re-located by 60, in a separate file (v1.2.applied.json). Target values and conversations are unchanged.",
+ "code_diff_lines": 0
+}
