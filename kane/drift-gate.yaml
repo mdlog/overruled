@@ -1,0 +1,31 @@
+# Release gate for the support assistant after any policy.md edit.
+# Blocking: every test ran, had at least one check, and passed; nothing broken.
+# Warning: a self-healed test or a flaky one can hide a drifted rule, so a person looks.
+policy: support-policy-drift-gate
+requires:
+  catalog: kane-cli
+gates:
+  - id: no-failed-tests
+    severity: blocking
+    metric: totals.failed
+    max: 0
+  - id: no-broken-oracles
+    severity: blocking
+    metric: totals.broken
+    max: 0
+  - id: every-test-checks-something
+    severity: blocking
+    metric: metrics.tests_without_checks
+    max: 0
+  - id: all-pass
+    severity: blocking
+    metric: pass_rate
+    min: 1
+  - id: no-self-healing-on-policy-tests
+    severity: warning
+    metric: metrics.heal.healed_tests
+    max: 0
+  - id: not-flaky
+    severity: warning
+    metric: metrics.flaky_rate
+    max: 0

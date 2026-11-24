@@ -1,0 +1,19 @@
+
+{"metric":"totals.tests","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"totals.passed","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Passed tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"totals.failed","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Failed tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"totals.broken","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Broken tests","description":"Tests whose oracle could not be evaluated.","per_test":true,"range":null,"values":null}
+{"metric":"totals.skipped","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Skipped tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"pass_rate","catalog":"evidence-core","catalog_version":"0.1","type":"ratio","unit":null,"label":"Pass rate","description":"passed ÷ (tests − skipped). Errors when every test was skipped.","per_test":true,"range":[0,1],"values":null}
+{"metric":"steps.total","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Steps","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"steps.failed","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Failed steps","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"steps.skipped","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Skipped steps","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"run.duration_ms","catalog":"evidence-core","catalog_version":"0.1","type":"ms","unit":null,"label":"Run duration","description":"run.yaml ended − started.","per_test":false,"range":null,"values":null}
+{"metric":"run.status","catalog":"evidence-core","catalog_version":"0.1","type":"enum","unit":null,"label":"Run status","description":null,"per_test":false,"range":null,"values":["running","finalized","aborted"]}
+{"metric":"failures.count","catalog":"evidence-core","catalog_version":"0.1","type":"count","unit":null,"label":"Failure records","description":"Rows in the root failure.yaml index.","per_test":false,"range":null,"values":null}
+{"metric":"metrics.tests_without_checks","catalog":"kane-cli","catalog_version":1,"type":"count","unit":"tests","label":"Tests without checks","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"metrics.heal.healed_tests","catalog":"kane-cli","catalog_version":1,"type":"count","unit":"tests","label":"Healed tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"metrics.heal.exhausted_tests","catalog":"kane-cli","catalog_version":1,"type":"count","unit":"tests","label":"Heal-exhausted tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"metrics.heal.reauthored_steps","catalog":"kane-cli","catalog_version":1,"type":"count","unit":"steps","label":"Re-authored steps","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"metrics.non_replay_tests","catalog":"kane-cli","catalog_version":1,"type":"count","unit":"tests","label":"Non-replay tests","description":null,"per_test":true,"range":null,"values":null}
+{"metric":"metrics.flaky_rate","catalog":"kane-cli","catalog_version":1,"type":"ratio","unit":"fraction of tests","label":"Flaky rate","description":null,"per_test":true,"range":[0,1],"values":null}
